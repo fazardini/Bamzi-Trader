@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from bamzi.models import Industry, Share, UserShare
+
+admin.site.register(Industry)
+admin.site.register(Share)
+admin.site.register(UserShare)

@@ -12,7 +12,7 @@ class Share(models.Model):
     company_name = models.CharField(verbose_name="Company Name", max_length=64, null=True, blank=False)
     last_price = models.IntegerField(verbose_name="Last Price", null=True, blank=True)
     final_price = models.IntegerField(verbose_name="Final Price", null=True, blank=True)
-    eps = models.IntegerField(verbose_name="EPS")
+    eps = models.IntegerField(verbose_name="EPS", null=True)
 
     MARKET_TYPES = (
         ('B1', 'بازار اول بورس'),
