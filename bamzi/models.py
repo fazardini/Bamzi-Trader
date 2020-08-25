@@ -9,7 +9,7 @@ class Industry(models.Model):
 
 class Share(models.Model):
     symbol_name = models.CharField(verbose_name="Symbol Name", max_length=32)
-    company_name = models.CharField(verbose_name="Company Name", max_length=64, null=True, blank=False)
+    company_name = models.CharField(verbose_name="Company Name", max_length=256, null=True, blank=False)
     last_price = models.IntegerField(verbose_name="Last Price", null=True, blank=True)
     final_price = models.IntegerField(verbose_name="Final Price", null=True, blank=True)
     eps = models.IntegerField(verbose_name="EPS", null=True)

@@ -3,3 +3,6 @@
 3. change Excel file to excel with this cols -> 'نماد'
 4. save as all_shares.csv and put on helpers folder of bamzi app
 5. migrate bamzi app
+
+---------------------------------------------------------------------------------
+

@@ -26,10 +26,10 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('symbol_name', models.CharField(max_length=32, verbose_name='Symbol Name')),
-                ('company_name', models.CharField(max_length=64, null=True, verbose_name='Company Name')),
+                ('company_name', models.CharField(max_length=256, null=True, verbose_name='Company Name')),
                 ('last_price', models.IntegerField(blank=True, null=True, verbose_name='Last Price')),
                 ('final_price', models.IntegerField(blank=True, null=True, verbose_name='Final Price')),
-                ('eps', models.IntegerField(verbose_name='EPS')),
+                ('eps', models.IntegerField(null=True, verbose_name='EPS')),
                 ('market_type', models.CharField(choices=[('B1', 'بازار اول بورس'), ('B2', 'بازار دوم بورس'), ('F1', 'بازار اول فرابورس'), ('F1', 'بازار دوم فرابورس'), ('PR', 'بازار پایه قرمز'), ('PO', 'بازار پایه نارنجی'), ('PY', 'بازار پایه زرد')], max_length=2, null=True, verbose_name='Market Type')),
                 ('base_volume', models.BigIntegerField(blank=True, null=True, verbose_name='Base Volume')),
                 ('average_volume', models.BigIntegerField(blank=True, null=True, verbose_name='Average Volume')),
