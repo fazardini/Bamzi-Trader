@@ -8,6 +8,7 @@
 doc/_build
 .coverage
 htmlcov
+.vscode/
 
 Thumbs.db
 .DS_Store
