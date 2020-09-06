@@ -1,7 +1,7 @@
 from django.urls import path
 
-from bamzi.views import import_share_data
+from bamzi.views import update_share_data
 
 urlpatterns = [
-    path('', import_share_data),
+    path('share/update/', update_share_data),
 ]

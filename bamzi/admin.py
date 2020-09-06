@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from bamzi.models import Industry, Share, UserShare
+from bamzi.models import Industry, Share, UserShare, ShareConvention
 
 class ShareAdmin(admin.ModelAdmin):
     list_display = ('symbol_name', 'company_name')
@@ -9,3 +9,4 @@ class ShareAdmin(admin.ModelAdmin):
 admin.site.register(Industry)
 admin.site.register(Share, ShareAdmin)
 admin.site.register(UserShare)
+admin.site.register(ShareConvention)
