@@ -4,10 +4,47 @@ import requests
 from BamziTrader.settings import BASE_DIR
 from bamzi.models import Share
 from bamzi.helpers.text_helpers import *
+from django.contrib.auth.models import User
+from django.contrib.auth import login, logout, authenticate
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+from django.urls import reverse
 
 
-tn = TextNormalizer(TextNormalizerConfig.NORMAL_NAME_CONFIG)
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = User.objects.filter(username=username).first()
+        if user:
+            if user.is_active:
+                user = authenticate(username=username, password=password)
+                if user:
+                    login(request, user)
+                    return HttpResponseRedirect(reverse('my_share', kwargs={'username': user.username}))
+                else:
+                    return render(request, 'bamzi/login.html', {'error': True})
+            else:
+                return render(request, 'bamzi/login.html', {'active_error': True})
+        else:
+            return render(request, 'bamzi/login.html', {'error': True})
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('my_share', kwargs={'username': request.user.username}))
+    else:
+        return render(request, 'bamzi/login.html', {})
+
+
+def user_logout(request):
+
+    logout(request)
+    return HttpResponseRedirect(reverse('login'))
+
+
+def my_share(request, username):
+    return render(request, 'bamzi/index.html', {'share_data': {}})
+
+
 def update_share_data(request):
+    tn = TextNormalizer(TextNormalizerConfig.NORMAL_NAME_CONFIG)
     tse_response = requests.get('http://www.tsetmc.com/tsev2/data/MarketWatchInit.aspx?h=0&r=0')
     if tse_response.status_code == 200:
         tse_data = tse_response.text.split(';')
