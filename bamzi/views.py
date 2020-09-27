@@ -1,6 +1,6 @@
 from django.shortcuts import render
-import pandas as pd
 import requests
+import json
 from BamziTrader.settings import BASE_DIR
 from bamzi.models import Share
 from bamzi.helpers.text_helpers import *
@@ -20,7 +20,7 @@ def user_login(request):
                 user = authenticate(username=username, password=password)
                 if user:
                     login(request, user)
-                    return HttpResponseRedirect(reverse('my_share', kwargs={'username': user.username}))
+                    return HttpResponseRedirect(reverse('my_shares', kwargs={'username': user.username}))
                 else:
                     return render(request, 'bamzi/login.html', {'error': True})
             else:
@@ -28,7 +28,7 @@ def user_login(request):
         else:
             return render(request, 'bamzi/login.html', {'error': True})
     if request.user.is_authenticated:
-        return HttpResponseRedirect(reverse('my_share', kwargs={'username': request.user.username}))
+        return HttpResponseRedirect(reverse('my_shares', kwargs={'username': request.user.username}))
     else:
         return render(request, 'bamzi/login.html', {})
 
@@ -39,8 +39,75 @@ def user_logout(request):
     return HttpResponseRedirect(reverse('login'))
 
 
-def my_share(request, username):
-    return render(request, 'bamzi/index.html', {'share_data': {}})
+def shares_name(request):
+    if request.is_ajax():
+        searched_text = request.GET.get('term', '')
+        shares = Share.objects.filter(symbol_name__icontains=searched_text).distinct().values(
+            'symbol_name', 'id').order_by('symbol_name')[:10]
+        results = []
+        for share in shares:
+            share_json = {'label': share['symbol_name'], 'value': share['symbol_name'],
+                          'id': share['id']}
+            results.append(share_json)
+        data = json.dumps(results)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
+
+
+def my_shares(request, username):
+    user = request.user
+    access = (user.username == username)
+    context_dict = {}
+    if access:
+
+        # surplus_drugs = SurplusDrug.objects.filter(hospital=hospital).exclude(
+        #     Q(expiration_date__lt=the_today()) |
+        #     Q(current_count=0)
+        # ).distinct()
+        # if request.method == 'POST':
+        #     sort_by = int(request.POST.get('sorted_by', 0))
+        #     drug_type = request.POST.get('drug_type', 'all')
+        #     if drug_type != 'all':
+        #         surplus_drugs = surplus_drugs.filter(drug_type=drug_type)
+        #     if sort_by == 4:
+        #         surplus_drugs = surplus_drugs.order_by('current_count')
+        #     elif sort_by == 3:
+        #         surplus_drugs = surplus_drugs.order_by('-current_count')
+        #     elif sort_by == 2:
+        #         surplus_drugs = surplus_drugs.order_by('-expiration_date')
+        #     elif sort_by == 1:
+        #         surplus_drugs = surplus_drugs.order_by('expiration_date')
+        #     else:
+        #         surplus_drugs = surplus_drugs.order_by('drug__name')
+        #     surplus_drugs = surplus_drugs.values(
+        #         'safe_id', 'drug__name', 'expiration_date', 'current_count', 'cat',
+        #         'drug_type', 'price')
+        # surplus_drugs = surplus_drugs.values(
+        #     'safe_id', 'drug__name', 'expiration_date', 'current_count', 'cat',
+        #     'drug_type', 'price')
+        # for drug in surplus_drugs:
+        #     drug['ordered'] = not OrderedDrug.objects.filter(surplus_drug__safe_id=drug['safe_id']).exists()
+        #     drug['cat'] = SurplusDrug.CAT_DICT[drug['cat']]
+        #     drug['drug_type'] = SurplusDrug.TYPE_DICT[drug['drug_type']]
+        #     if drug['expiration_date'] - the_today() <= timedelta(days=90):
+        #         drug['exp_state'] = "lte3"
+        #     elif drug['expiration_date'] - the_today() <= timedelta(days=180):
+        #         drug['exp_state'] = "lte6"
+        #     else:
+        #         drug['exp_state'] = "gt6"
+        # context_dict = {'access': access, 'surplus_drugs': list(surplus_drugs),
+        #                 'safe_id': request.user.hospital.safe_id,
+        #                 'pending_drugs_count': pending_drugs_count(request.user.hospital)}
+        if request.method == 'POST':
+            return JsonResponse(context_dict)
+        return render(request, 'bamzi/shares.html', context_dict)
+    else:
+        return render(request, 'bamzi/shares.html', {'access': access})
+
+# def my_share(request, username):
+#     return render(request, 'bamzi/index.html', {'share_data': {}})
 
 
 def update_share_data(request):

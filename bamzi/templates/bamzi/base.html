@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="icon" href="{% static 'bamzi/images/favicon.ico' %}" type="image/x-icon" />
+    <link rel="stylesheet" href="{% static 'bamzi/css/bootstrap-rtl.min.css' %}">
+    <script src="{% static 'bamzi/js/jquery.min.js' %}"></script>
+    <script src="{% static 'bamzi/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'bamzi/js/Autocomplete.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bamzi/css/AutoComplete.css' %}" type="text/css" media="all" />
+    <link href="{% static 'bamzi/css/style.css' %}" rel="stylesheet"/>
+    {% block header %}
+    {% endblock %}
+  </head>
+  <body>
+    <header>
+      <div class="row margin-0">
+        <div class="col-lg-5 col-md-5 col-sm-5">
+          <img src="{% static 'bamzi/images/logoHeader.png' %}">
+        </div>
+        <div class="col-lg-7 col-md-7 col-sm-7"></div>
+      </div>
+    </header>
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <ul class="nav navbar-nav">
+          {% block active_menu %}
+          {% endblock %}
+        </ul>
+        <ul class="nav navbar-nav navbar-left">
+          {% comment %} <li><button type="button" class="btn" id="show_pass_modal" data-toggle="modal" data-target="#PassModal">تغییر رمز</button></li> {% endcomment %}
+          <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> خروج</a></li>
+        </ul>
+      </div>
+    </nav>
+    <section class="main">
+      {% block content %}
+      {% endblock %}
+    <div class="modal" id="PassModal" role="dialog">
+    <div class="modal-dialog ">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" id="close_pass_modal" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">تغییر رمز عبور</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row margin-10">
+                <label class="col-lg-3 col-md-3 col-sm-3 col-xs-3 text-left">رمز قبلی</label>
+                <input class="col-lg-8 col-md-8 col-sm-8 col-xs-8" type="password" id="old_pass" required>
+            </div>
+            <div class="row margin-10">
+                <label class="col-lg-3 col-md-3 col-sm-3 col-xs-3 text-left">رمز جدید</label>
+                <input class="col-lg-8 col-md-8 col-sm-8 col-xs-8" type="password" id="new_pass" required>
+            </div>
+            <div class="row margin-10">
+                <label class="col-lg-3 col-md-3 col-sm-3 col-xs-3 text-left">تکرار رمز جدید</label>
+                <input class="col-lg-8 col-md-8 col-sm-8 col-xs-8" type="password" id="repeat_pass" required>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 red-color" id="pass_err"></div>
+            <button type="submit" id="change_pass" class="col-lg-3 col-md-3 col-sm-3 col-xs-3">تغییر رمز</button>
+        </div>
+      </div>
+    </div>
+  </div>
+    </div>
+    </section>
+  <script>
+      $(document).ready(function(){
+          $("#change_pass").click(function(e){
+              var newPass = $("#new_pass").val();
+              var repeatPass = $("#repeat_pass").val();
+              var oldPass = $("#old_pass").val();
+              var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+              if (newPass == repeatPass){
+                  $.ajax({
+                      url: '/change-password/',
+                      type: "post",
+                      data : {
+                          pass : oldPass,
+                          newPass : newPass,
+                          csrfmiddlewaretoken: csrftoken
+                      },
+                      error: function () {
+                          alert('در ارتباط با سرور مشکل پیش آمده است. لطفا بعدا امتحان کنید')
+                      },
+                      success: function (response) {
+                          if (response.done) {
+                              $("#close_pass_modal").trigger('click');
+                              alert("رمز عبور با موفقیت تغییر کرد.");
+                          } else if(response.error){
+                                $("#pass_err").html(response.error)
+                          }
+                      }
+                  });
+              }
+              else{
+                  $("#pass_err").html('رمز جدید با تکرار آن مطابقت ندارد');
+              }
+
+          });
+          $("#close_pass_modal").click(function(e){
+              $("#pass_err").html('');
+              $("#new_pass").val('');
+              $("#old_pass").val('');
+              $("#repeat_pass").val('');
+          });
+      });
+  </script>
+  </body>
+</html>

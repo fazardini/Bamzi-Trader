@@ -42,7 +42,7 @@ class UserShare(models.Model):
     basic_price = models.BigIntegerField(verbose_name="سربه‌سر", null=True, blank=True)
     relative_max_price = models.IntegerField(verbose_name="بیشترین قیمت نسبی", null=True, blank=True)
     relative_min_price = models.IntegerField(verbose_name="کمترین قیمت نسبی", null=True, blank=True)
-    buy_date = models.DateField(verbose_name="تاریخ خرید", null=True, blank=True)
+    buy_date = models.DateField(verbose_name="تاریخ خرید", null=True, blank=True, auto_now_add=True)
     sell_date = models.DateField(verbose_name="تاریخ فروش", null=True, blank=True)
 
 
