@@ -1,10 +1,246 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Home</title>
-</head>
-<body>
-{{share_data}}
-</body>
-</html>
+﻿{% extends "bamzi/base.html" %}
+{% load static %}
+
+{% block title %}سهام من{% endblock %}
+
+{% block header_css %}{% endblock %}
+
+{% block active_menu %}
+<li>
+    <a class="active-menu" href="index.html"><i class="fa fa-dashboard"></i> سهام من</a>
+</li>
+<li>
+    <a href="ui-elements.html"><i class="fa fa-desktop"></i> حق تقدم‌ها</a>
+</li>
+<li>
+    <a href="chart.html"><i class="fa fa-bar-chart-o"></i> Charts</a>
+</li>
+<li>
+    <a href="tab-panel.html"><i class="fa fa-qrcode"></i> Tabs & Panels</a>
+</li>
+
+<li>
+    <a href="table.html"><i class="fa fa-table"></i> Responsive Tables</a>
+</li>
+<li>
+    <a href="form.html"><i class="fa fa-edit"></i> Forms </a>
+</li>
+
+
+<li>
+    <a href="#"><i class="fa fa-sitemap"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
+    <ul class="nav nav-second-level">
+        <li>
+            <a href="#">Second Level Link</a>
+        </li>
+        <li>
+            <a href="#">Second Level Link</a>
+        </li>
+        <li>
+            <a href="#">Second Level Link<span class="fa arrow"></span></a>
+            <ul class="nav nav-third-level">
+                <li>
+                    <a href="#">Third Level Link</a>
+                </li>
+                <li>
+                    <a href="#">Third Level Link</a>
+                </li>
+                <li>
+                    <a href="#">Third Level Link</a>
+                </li>
+
+            </ul>
+
+        </li>
+    </ul>
+</li>
+<li>
+    <a href="empty.html"><i class="fa fa-fw fa-file"></i> Empty Page</a>
+</li>
+{% endblock %}
+
+{% block page_header %}داشبورد{% endblock %}
+
+{% block page_header_small %}سهام من{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                افزودن سهم
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <form role="form">
+                        <div class="form-group col-lg-6">
+                            <label>سهم</label>
+                            <input class="form-control">
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <label>قیمت سربه‌سر</label>
+                            <input class="form-control" placeholder="به ریال">
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <label>تعداد</label>
+                            <input class="form-control" type="number">
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <label>تاریخ خرید</label>
+                            <input class="form-control" type="date">
+                        </div>
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary col-md-3">ثبت</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.row (nested) -->
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <!-- Advanced Tables -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                    سهام من
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                        <thead>
+                            <tr>
+                                <th>سهم</th>
+                                <th>سربه‌سر</th>
+                                <th>قیمت امروز</th>
+                                <th>تعداد</th>
+                                <th>وضعیت</th>
+                                <th>سود / ضرر</th>
+                                <th>درصد هدف</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="success">
+                                <td>دکیمی</td>
+                                <td>666</td>
+                                <td>4234</td>
+                                <td class="center">4</td>
+                                <td class="center">X</td>
+                                <td class="center">4</td>
+                                <td class="center">X</td>
+                            </tr>
+                            <tr class="even gradeC">
+                                <td>کاسپین</td>
+                                <td>8888</td>
+                                <td>42342</td>
+                                <td class="center">5</td>
+                                <td class="center">C</td>
+                                <td class="center">4</td>
+                                <td class="center">X</td>
+                            </tr>
+                            <tr class="odd gradeA">
+                                <td>دانا</td>
+                                <td>42342</td>
+                                <td>423423</td>
+                                <td class="center">5.5</td>
+                                <td class="center">A</td>
+                                <td class="center">4</td>
+                                <td class="center">X</td>
+                            </tr>
+                            <tr class="gradeA">
+                                <td>وبیمه</td>
+                                <td>4343</td>
+                                <td>543</td>
+                                <td class="center">420.1</td>
+                                <td class="center">A</td>
+                                <td class="center">4</td>
+                                <td class="center">X</td>
+                            </tr>
+                            <tr class="gradeA">
+                                <td>شپنا</td>
+                                <td>42434</td>
+                                <td>43434</td>
+                                <td class="center">413</td>
+                                <td class="center">A</td>
+                                <td class="center">4</td>
+                                <td class="center">X</td>
+                            </tr>
+                            <tr class="gradeA">
+                                <td>شبریز</td>
+                                <td>42342</td>
+                                <td>4234</td>
+                                <td class="center">-</td>
+                                <td class="center">A</td>
+                                <td class="center">4</td>
+                                <td class="center">X</td>
+                            </tr>
+                            <tr class="gradeA">
+                                <td>شبندر</td>
+                                <td>4234</td>
+                                <td>4234</td>
+                                <td class="center">-</td>
+                                <td class="center">A</td>
+                                <td class="center">4</td>
+                                <td class="center">X</td>
+                            </tr>
+                            <tr class="gradeA">
+                                <td>شتران</td>
+                                <td>423423</td>
+                                <td>4234</td>
+                                <td class="center">-</td>
+                                <td class="center">A</td>
+                                <td class="center">4</td>
+                                <td class="center">X</td>
+                            </tr>
+                            <tr class="gradeA">
+                                <td>دزهراوی</td>
+                                <td>4242343</td>
+                                <td>4234</td>
+                                <td class="center">-</td>
+                                <td class="center">A</td>
+                                <td class="center">4</td>
+                                <td class="center">X</td>
+                            </tr>
+                            <tr class="gradeA">
+                                <td>ددام</td>
+                                <td>4234</td>
+                                <td>423423</td>
+                                <td class="center">-</td>
+                                <td class="center">A</td>
+                                <td class="center">4</td>
+                                <td class="center">X</td>
+                            </tr>
+                            <tr class="gradeA">
+                                <td>دابور</td>
+                                <td>42424</td>
+                                <td>4342342</td>
+                                <td class="center">44</td>
+                                <td class="center">A</td>
+                                <td class="center">4</td>
+                                <td class="center">X</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+        <!--End Advanced Tables -->
+    </div>
+</div>
+
+{% endblock %}
+
+{% block footer_js %}
+    <!-- Custom Js -->
+
+    <script src="{% static 'bamzi/js/dataTables/jquery.dataTables.js' %}" ></script>
+    <script src="{% static 'bamzi/js/dataTables/dataTables.bootstrap.js' %}" ></script>
+    <script>
+            $(document).ready(function () {
+                $('#dataTables-example').dataTable();
+            });
+    </script>
+    {% comment %} <script src="{% static 'bamzi/js/custom-scripts.js' %}"></script> {% endcomment %}
+{% endblock %}
