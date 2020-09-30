@@ -77,6 +77,13 @@ p {
     line-height:25px;
     padding-top:20px;
 }
+#remove_share{
+  display: none;
+  position: absolute;
+  left: 25px;
+  top: 35px;
+  cursor: pointer;
+}
 .navbar-side {
     z-index: 0; 
 }

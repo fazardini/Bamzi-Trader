@@ -15,7 +15,7 @@
     <!-- Custom Styles-->
     <link href="{% static 'bamzi/css/custom-styles.css' %}" rel="stylesheet" />
     <!-- Google Fonts-->
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' /> 
+    <link rel="stylesheet" href="{% static 'bamzi/css/AutoComplete.css' %}" type="text/css" media="all" />
     {% block header_css %}
     {% endblock %}
 </head>
@@ -291,7 +291,7 @@
     <script src="{% static 'bamzi/js/jquery.js' %}"  ></script>
     <!-- Bootstrap Js -->
     <script src="{% static 'bamzi/js/bootstrap.min.js' %}"></script>
-	 
+	<script src="{% static 'bamzi/js/Autocomplete.js' %}"></script>
     <!-- Metis Menu Js -->
     <script src="{% static 'bamzi/js/jquery.metisMenu.js' %}"></script>
     <!-- Morris Chart Js -->

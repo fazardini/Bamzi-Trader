@@ -75,7 +75,8 @@
                     <form role="form">
                         <div class="form-group col-lg-6">
                             <label>سهم</label>
-                            <input class="form-control">
+                            <input class="form-control" id="share_name">
+                            <span class="glyphicon glyphicon-remove d-none" id="remove_share"></span>
                         </div>
                         <div class="form-group col-lg-6">
                             <label>قیمت سربه‌سر</label>
@@ -238,9 +239,34 @@
     <script src="{% static 'bamzi/js/dataTables/jquery.dataTables.js' %}" ></script>
     <script src="{% static 'bamzi/js/dataTables/dataTables.bootstrap.js' %}" ></script>
     <script>
-            $(document).ready(function () {
-                $('#dataTables-example').dataTable();
+        $(document).ready(function () {
+            $('#dataTables-example').dataTable();
+
+            $(function() {
+                $("#share_name").autocomplete({
+                    source: '/bamzi/shares-name/',
+                    select: function (event, ui) { //item selected
+                        AutoCompleteSelectHandlerShop(event, ui)
+                    },
+                    minLength: 2,
+                });
             });
+
+            function AutoCompleteSelectHandlerShop(event, ui){
+                var selectedObj = ui.item;
+                $("#remove_share").show();
+                if(selectedObj.id)
+                    $("#share_name").attr("data-share", selectedObj.id);
+                else
+                    $("#share_name").attr("data-share", "");
+                var selectedObj = ui.item;
+            }
+            $("#remove_share").click(function(){
+                $("#share_name").val('');
+                $("#share_name").attr("data-share", "");
+                $("#remove_share").hide();
+            });
+        });
     </script>
     {% comment %} <script src="{% static 'bamzi/js/custom-scripts.js' %}"></script> {% endcomment %}
 {% endblock %}
