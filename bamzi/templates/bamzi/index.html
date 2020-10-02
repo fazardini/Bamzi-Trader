@@ -72,24 +72,26 @@
             </div>
             <div class="panel-body">
                 <div class="row">
-                    <form role="form">
+                    <form role="form" action="{% url 'my_shares' username=request.user.username %}" method="POST">
+                    {% csrf_token %}
                         <div class="form-group col-lg-6">
                             <label>سهم</label>
-                            <input class="form-control" id="share_name">
+                            <input class="form-control" id="share_name" required>
+                            <input class="hide" id="share_id" name="share_id" required>
                             <span class="glyphicon glyphicon-remove d-none" id="remove_share"></span>
                         </div>
                         <div class="form-group col-lg-6">
                             <label>قیمت سربه‌سر</label>
-                            <input class="form-control" placeholder="به ریال">
+                            <input class="form-control" placeholder="به ریال" name="basic_price" required>
                         </div>
                         <div class="form-group col-lg-6">
                             <label>تعداد</label>
-                            <input class="form-control" type="number">
+                            <input class="form-control" type="number" name="count" required>
                         </div>
-                        <div class="form-group col-lg-6">
+                        {% comment %} <div class="form-group col-lg-6">
                             <label>تاریخ خرید</label>
                             <input class="form-control" type="date">
-                        </div>
+                        </div> {% endcomment %}
                         <div class="col-md-12">
                             <button type="submit" class="btn btn-primary col-md-3">ثبت</button>
                         </div>
@@ -113,8 +115,10 @@
                         <thead>
                             <tr>
                                 <th>سهم</th>
+                                <th>شرکت</th>
                                 <th>سربه‌سر</th>
-                                <th>قیمت امروز</th>
+                                <th>آخرین قیمت</th>
+                                <th>قیمت پایانی</th>
                                 <th>تعداد</th>
                                 <th>وضعیت</th>
                                 <th>سود / ضرر</th>
@@ -122,105 +126,19 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="success">
-                                <td>دکیمی</td>
-                                <td>666</td>
-                                <td>4234</td>
-                                <td class="center">4</td>
-                                <td class="center">X</td>
-                                <td class="center">4</td>
-                                <td class="center">X</td>
-                            </tr>
-                            <tr class="even gradeC">
-                                <td>کاسپین</td>
-                                <td>8888</td>
-                                <td>42342</td>
-                                <td class="center">5</td>
-                                <td class="center">C</td>
-                                <td class="center">4</td>
-                                <td class="center">X</td>
-                            </tr>
-                            <tr class="odd gradeA">
-                                <td>دانا</td>
-                                <td>42342</td>
-                                <td>423423</td>
-                                <td class="center">5.5</td>
-                                <td class="center">A</td>
-                                <td class="center">4</td>
-                                <td class="center">X</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>وبیمه</td>
-                                <td>4343</td>
-                                <td>543</td>
-                                <td class="center">420.1</td>
-                                <td class="center">A</td>
-                                <td class="center">4</td>
-                                <td class="center">X</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>شپنا</td>
-                                <td>42434</td>
-                                <td>43434</td>
-                                <td class="center">413</td>
-                                <td class="center">A</td>
-                                <td class="center">4</td>
-                                <td class="center">X</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>شبریز</td>
-                                <td>42342</td>
-                                <td>4234</td>
-                                <td class="center">-</td>
-                                <td class="center">A</td>
-                                <td class="center">4</td>
-                                <td class="center">X</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>شبندر</td>
-                                <td>4234</td>
-                                <td>4234</td>
-                                <td class="center">-</td>
-                                <td class="center">A</td>
-                                <td class="center">4</td>
-                                <td class="center">X</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>شتران</td>
-                                <td>423423</td>
-                                <td>4234</td>
-                                <td class="center">-</td>
-                                <td class="center">A</td>
-                                <td class="center">4</td>
-                                <td class="center">X</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>دزهراوی</td>
-                                <td>4242343</td>
-                                <td>4234</td>
-                                <td class="center">-</td>
-                                <td class="center">A</td>
-                                <td class="center">4</td>
-                                <td class="center">X</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>ددام</td>
-                                <td>4234</td>
-                                <td>423423</td>
-                                <td class="center">-</td>
-                                <td class="center">A</td>
-                                <td class="center">4</td>
-                                <td class="center">X</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>دابور</td>
-                                <td>42424</td>
-                                <td>4342342</td>
-                                <td class="center">44</td>
-                                <td class="center">A</td>
-                                <td class="center">4</td>
-                                <td class="center">X</td>
-                            </tr>
+                            {% for share in user_shares %}
+                                <tr class="odd gradeA">
+                                    <td>{{share.symbol_name}}</td>
+                                    <td>{{share.company_name}}</td>
+                                    <td>{{share.basic_price}}</td>
+                                    <td>{{share.last_price}}</td>
+                                    <td>{{share.final_price}}</td>
+                                    <td>{{share.count}}</td>
+                                    <td>9</td>
+                                    <td>{{share.profit_loss}}</td>
+                                    <td>5</td>
+                                </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -255,10 +173,14 @@
             function AutoCompleteSelectHandlerShop(event, ui){
                 var selectedObj = ui.item;
                 $("#remove_share").show();
-                if(selectedObj.id)
+                if(selectedObj.id){
                     $("#share_name").attr("data-share", selectedObj.id);
-                else
+                    $("#share_id").val(selectedObj.id);
+                }
+                else{
                     $("#share_name").attr("data-share", "");
+                    $("#share_id").val("");
+                }
                 var selectedObj = ui.item;
             }
             $("#remove_share").click(function(){

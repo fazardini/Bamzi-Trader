@@ -24,8 +24,15 @@ http://creativecommons.org/licenses/by/3.0/
   font-style:normal;
   font-weight:normal;
 }
+@font-face {
+  font-family: 'yekanNumbers';
+  src: url("../fonts/yekanNumbers-Regular.woff");
+  src: url("../fonts/yekanNumbers-Regular.woff") format("woff"), url("../fonts/yekanNumbers-Regular.ttf") format("truetype"), url("../fonts/yekanNumbers-Regular.svg#yekanNumbers-Regular") format("svg");
+  font-style: normal;
+  font-weight: normal;
+}
 body {
-  font-family: 'Samim';
+  font-family: 'yekanNumbers', 'Samim';
   background: #32C2CD url(../img/bg-img.jpg) !important;
   direction: rtl !important;
   

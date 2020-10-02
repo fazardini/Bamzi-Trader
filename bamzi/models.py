@@ -16,6 +16,8 @@ class Share(models.Model):
     absolute_max_price = models.IntegerField(verbose_name="بیشترین قیمت مطلق", null=True, blank=True)
     absolute_min_price = models.IntegerField(verbose_name="کمترین قیمت مطلق", null=True, blank=True)
     tse_id = models.CharField(verbose_name="Tse id", max_length=64)
+    tp1 = models.IntegerField(verbose_name="اولین هدف صعود", null=True, blank=True)
+    sl1 = models.IntegerField(verbose_name="اولین هدف نزول", null=True, blank=True)
 
     MARKET_TYPES = (
         ('B1', 'بازار اول بورس'),
@@ -39,11 +41,14 @@ class UserShare(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT, related_name="user_shares")
     share = models.ForeignKey(Share, on_delete=models.CASCADE, related_name="users")
     count = models.IntegerField(verbose_name="تعداد")
-    basic_price = models.BigIntegerField(verbose_name="سربه‌سر", null=True, blank=True)
+    basic_price = models.BigIntegerField(verbose_name="سربه‌سر")
     relative_max_price = models.IntegerField(verbose_name="بیشترین قیمت نسبی", null=True, blank=True)
     relative_min_price = models.IntegerField(verbose_name="کمترین قیمت نسبی", null=True, blank=True)
     buy_date = models.DateField(verbose_name="تاریخ خرید", null=True, blank=True, auto_now_add=True)
     sell_date = models.DateField(verbose_name="تاریخ فروش", null=True, blank=True)
+
+    def __str__(self):
+        return "%(user)s - %(share)s" % {'user': self.user, 'share': self.share}
 
 
 class ShareConvention(models.Model):

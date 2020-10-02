@@ -2,7 +2,7 @@ from django.shortcuts import render
 import requests
 import json
 from BamziTrader.settings import BASE_DIR
-from bamzi.models import Share
+from bamzi.models import Share, UserShare
 from bamzi.helpers.text_helpers import *
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
@@ -59,52 +59,35 @@ def shares_name(request):
 def my_shares(request, username):
     user = request.user
     access = (user.username == username)
-    context_dict = {}
-    if access:
+    if not access:
+        return render(request, 'bamzi/index.html', {})
+    if request.method == 'POST':
+        share_id = request.POST.get('share_id', '')
+        count = request.POST.get('count', 0)
+        basic_price = request.POST.get('basic_price', 0)
+        if share_id and count and basic_price:
+            share = Share.objects.filter(pk=share_id).first()
+            count = int(count)
+            basic_price = int(basic_price)
+            if share:
+                user_share = UserShare.objects.create(user=user,
+                share=share, count=count, basic_price=basic_price,
+                relative_max_price=basic_price,
+                relative_min_price=basic_price)
+    
+    user_shares = UserShare.objects.all()
+    user_shares_result = []
+    for u_share in user_shares:
+        user_shares_result.append({ 'id': u_share.id, 
+                                    'symbol_name': u_share.share.symbol_name,
+                                    'company_name': u_share.share.company_name,
+                                    'basic_price': u_share.basic_price,
+                                    'last_price': u_share.share.last_price,
+                                    'final_price': u_share.share.final_price,
+                                    'profit_loss':u_share.profit_loss,
+                                    'count': u_share.count})
+    return render(request, 'bamzi/index.html', {'user_shares':user_shares_result})
 
-        # surplus_drugs = SurplusDrug.objects.filter(hospital=hospital).exclude(
-        #     Q(expiration_date__lt=the_today()) |
-        #     Q(current_count=0)
-        # ).distinct()
-        # if request.method == 'POST':
-        #     sort_by = int(request.POST.get('sorted_by', 0))
-        #     drug_type = request.POST.get('drug_type', 'all')
-        #     if drug_type != 'all':
-        #         surplus_drugs = surplus_drugs.filter(drug_type=drug_type)
-        #     if sort_by == 4:
-        #         surplus_drugs = surplus_drugs.order_by('current_count')
-        #     elif sort_by == 3:
-        #         surplus_drugs = surplus_drugs.order_by('-current_count')
-        #     elif sort_by == 2:
-        #         surplus_drugs = surplus_drugs.order_by('-expiration_date')
-        #     elif sort_by == 1:
-        #         surplus_drugs = surplus_drugs.order_by('expiration_date')
-        #     else:
-        #         surplus_drugs = surplus_drugs.order_by('drug__name')
-        #     surplus_drugs = surplus_drugs.values(
-        #         'safe_id', 'drug__name', 'expiration_date', 'current_count', 'cat',
-        #         'drug_type', 'price')
-        # surplus_drugs = surplus_drugs.values(
-        #     'safe_id', 'drug__name', 'expiration_date', 'current_count', 'cat',
-        #     'drug_type', 'price')
-        # for drug in surplus_drugs:
-        #     drug['ordered'] = not OrderedDrug.objects.filter(surplus_drug__safe_id=drug['safe_id']).exists()
-        #     drug['cat'] = SurplusDrug.CAT_DICT[drug['cat']]
-        #     drug['drug_type'] = SurplusDrug.TYPE_DICT[drug['drug_type']]
-        #     if drug['expiration_date'] - the_today() <= timedelta(days=90):
-        #         drug['exp_state'] = "lte3"
-        #     elif drug['expiration_date'] - the_today() <= timedelta(days=180):
-        #         drug['exp_state'] = "lte6"
-        #     else:
-        #         drug['exp_state'] = "gt6"
-        # context_dict = {'access': access, 'surplus_drugs': list(surplus_drugs),
-        #                 'safe_id': request.user.hospital.safe_id,
-        #                 'pending_drugs_count': pending_drugs_count(request.user.hospital)}
-        if request.method == 'POST':
-            return JsonResponse(context_dict)
-        return render(request, 'bamzi/index.html', context_dict)
-    else:
-        return render(request, 'bamzi/index.html', {'access': access})
 
 # def my_share(request, username):
 #     return render(request, 'bamzi/index.html', {'share_data': {}})
@@ -112,22 +95,35 @@ def my_shares(request, username):
 
 def update_share_data(request):
     share_data = {}
-    # tn = TextNormalizer(TextNormalizerConfig.NORMAL_NAME_CONFIG)
-    # tse_response = requests.get('http://www.tsetmc.com/tsev2/data/MarketWatchInit.aspx?h=0&r=0')
-    # if tse_response.status_code == 200:
-    #     tse_data = tse_response.text.split(';')
-    #     tse_data = list(map(lambda x: x.split(','), tse_data))
-    #     tse_data = list(filter(lambda x: not hasNumbers(x[2]) and len(x)==23, tse_data))
-    #     for share_data in tse_data:
-    #         share = Share.objects.filter(tse_id=share_data[0]).first()
-    #         if not share:
-    #             share = Share.objects.create(tse_id=share_data[0])
-    #             share.symbol_name = tn.normalize_text(share_data[2])
-    #             share.company_name = tn.normalize_text(share_data[3])
+    tn = TextNormalizer(TextNormalizerConfig.NORMAL_NAME_CONFIG)
+    tse_response = requests.get('http://www.tsetmc.com/tsev2/data/MarketWatchInit.aspx?h=0&r=0')
+    if tse_response.status_code == 200:
+        tse_data = tse_response.text.split(';')
+        tse_data = list(map(lambda x: x.split(','), tse_data))
+        tse_data = list(filter(lambda x: not hasNumbers(x[2]) and len(x)==23, tse_data))
+        for share_data in tse_data:
+            share = Share.objects.filter(tse_id=share_data[0]).first()
+            if not share:
+                share = Share.objects.create(tse_id=share_data[0])
+                share.symbol_name = tn.normalize_text(share_data[2])
+                share.company_name = tn.normalize_text(share_data[3])
             
-    #         share.last_price = share_data[7]
-    #         share.final_price = share_data[6]
-    #         share.eps = 0 if not share_data[14] else int(share_data[14])
-    #         share.save()
+            share.last_price = share_data[7]
+            share.final_price = share_data[6]
+            share.eps = 0 if not share_data[14] else int(share_data[14])
+            # if share.absolute_max_price:
+            #     share.absolute_max_price = max(share.absolute_max_price, share.final_price)
+            # if share.absolute_min_price:
+            #     share.absolute_min_price = min(share.absolute_min_price, share.final_price)
+            share.absolute_max_price = max(share.absolute_max_price, share.final_price)
+            share.save()
+            user_shares = UserShare.objects.filter(share=share)
+            
+            for user_share in user_shares:
+                relative_max_price = max(share.final_price, user_share.relative_max_price)
+                relative_min_price = min(share.final_price, user_share.relative_min_price)
+                user_share.relative_max_price = relative_max_price
+                user_share.relative_min_price = relative_min_price
+                user_share.save()
 
     return render(request, 'bamzi/index.html', {'share_data': share_data})
