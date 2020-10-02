@@ -84,8 +84,10 @@ def my_shares(request, username):
                                     'basic_price': u_share.basic_price,
                                     'last_price': u_share.share.last_price,
                                     'final_price': u_share.share.final_price,
+                                    'count': u_share.count,
                                     'profit_loss':u_share.profit_loss,
-                                    'count': u_share.count})
+                                    'target': u_share.target,
+                                    'is_open': u_share.share.is_open})
     return render(request, 'bamzi/index.html', {'user_shares':user_shares_result})
 
 
@@ -101,6 +103,7 @@ def update_share_data(request):
         tse_data = tse_response.text.split(';')
         tse_data = list(map(lambda x: x.split(','), tse_data))
         tse_data = list(filter(lambda x: not hasNumbers(x[2]) and len(x)==23, tse_data))
+        Share.objects.all().update(is_open=False)
         for share_data in tse_data:
             share = Share.objects.filter(tse_id=share_data[0]).first()
             if not share:
@@ -108,22 +111,20 @@ def update_share_data(request):
                 share.symbol_name = tn.normalize_text(share_data[2])
                 share.company_name = tn.normalize_text(share_data[3])
             
-            share.last_price = share_data[7]
-            share.final_price = share_data[6]
+            share.last_price = int(share_data[7])
+            share.final_price = int(share_data[6])
             share.eps = 0 if not share_data[14] else int(share_data[14])
             # if share.absolute_max_price:
             #     share.absolute_max_price = max(share.absolute_max_price, share.final_price)
             # if share.absolute_min_price:
             #     share.absolute_min_price = min(share.absolute_min_price, share.final_price)
-            share.absolute_max_price = max(share.absolute_max_price, share.final_price)
+            share.is_open = True
             share.save()
             user_shares = UserShare.objects.filter(share=share)
             
             for user_share in user_shares:
-                relative_max_price = max(share.final_price, user_share.relative_max_price)
-                relative_min_price = min(share.final_price, user_share.relative_min_price)
-                user_share.relative_max_price = relative_max_price
-                user_share.relative_min_price = relative_min_price
+                user_share.relative_max_price = max(share.final_price, user_share.relative_max_price)
+                user_share.relative_min_price = min(share.final_price, user_share.relative_min_price)
                 user_share.save()
 
     return render(request, 'bamzi/index.html', {'share_data': share_data})

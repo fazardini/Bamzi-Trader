@@ -18,6 +18,7 @@ class Share(models.Model):
     tse_id = models.CharField(verbose_name="Tse id", max_length=64)
     tp1 = models.IntegerField(verbose_name="اولین هدف صعود", null=True, blank=True)
     sl1 = models.IntegerField(verbose_name="اولین هدف نزول", null=True, blank=True)
+    is_open = models.BooleanField(verbose_name="وضعیت سهم", default=False)
 
     MARKET_TYPES = (
         ('B1', 'بازار اول بورس'),
@@ -46,6 +47,26 @@ class UserShare(models.Model):
     relative_min_price = models.IntegerField(verbose_name="کمترین قیمت نسبی", null=True, blank=True)
     buy_date = models.DateField(verbose_name="تاریخ خرید", null=True, blank=True, auto_now_add=True)
     sell_date = models.DateField(verbose_name="تاریخ فروش", null=True, blank=True)
+
+    @property
+    def profit_loss(self):
+        """
+            درصد سود یا زیان سربه‌سر نسبت به آخرین قیمت را محاسبه میکند.
+        """
+        profit_loss = ((self.share.last_price/self.basic_price)-1)*100
+        return int(round(profit_loss))
+    
+
+    @property
+    def target(self):
+        """
+            درصدی که قیمت پایانی از سربه‌سر تا اولین هدف صعودی را طی کرده محاسبه میکند
+        """
+        target = ''
+        if self.share.tp1:
+            target = (self.share.final_price-self.basic_price)/(self.share.tp1-self.basic_price)*100
+            target = round(target, 2)
+        return target
 
     def __str__(self):
         return "%(user)s - %(share)s" % {'user': self.user, 'share': self.share}

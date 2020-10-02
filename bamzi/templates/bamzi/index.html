@@ -120,23 +120,22 @@
                                 <th>آخرین قیمت</th>
                                 <th>قیمت پایانی</th>
                                 <th>تعداد</th>
-                                <th>وضعیت</th>
-                                <th>سود / ضرر</th>
+                                <th>درصد سود/ضرر</th>
                                 <th>درصد هدف</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for share in user_shares %}
-                                <tr class="odd gradeA">
-                                    <td>{{share.symbol_name}}</td>
+                                <tr class="{% if share.target >= 100 %}success{% else %}odd gradeA{% endif %}">
+                                    <td><i class="fa fa-square text {% if share.is_open %}text-success{% else %}text-danger{% endif %}"></i>
+                                     {{share.symbol_name}}</td>
                                     <td>{{share.company_name}}</td>
                                     <td>{{share.basic_price}}</td>
                                     <td>{{share.last_price}}</td>
                                     <td>{{share.final_price}}</td>
                                     <td>{{share.count}}</td>
-                                    <td>9</td>
                                     <td>{{share.profit_loss}}</td>
-                                    <td>5</td>
+                                    <td>{{share.target}}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
