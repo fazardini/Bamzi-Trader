@@ -2,7 +2,7 @@ from django.shortcuts import render
 import requests
 import json
 from BamziTrader.settings import BASE_DIR
-from bamzi.models import Share, UserShare
+from bamzi.models import Share, UserShare, ShareConvention
 from bamzi.helpers.text_helpers import *
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
@@ -60,7 +60,7 @@ def my_shares(request, username):
     user = request.user
     access = (user.username == username)
     if not access:
-        return render(request, 'bamzi/index.html', {})
+        return render(request, 'bamzi/user_share.html', {})
     if request.method == 'POST':
         share_id = request.POST.get('share_id', '')
         count = request.POST.get('count', 0)
@@ -88,11 +88,23 @@ def my_shares(request, username):
                                     'profit_loss':u_share.profit_loss,
                                     'target': u_share.target,
                                     'is_open': u_share.share.is_open})
-    return render(request, 'bamzi/index.html', {'user_shares':user_shares_result})
+    return render(request, 'bamzi/user_share.html', {'user_shares':user_shares_result})
 
 
-# def my_share(request, username):
-#     return render(request, 'bamzi/index.html', {'share_data': {}})
+def share_convention(request):
+    share_conventions = ShareConvention.objects.all()
+    share_convention_result = []
+    for share_c in share_conventions:
+        share_convention_result.append({ 'id': share_c.id, 
+                                    'symbol_name': share_c.share.symbol_name,
+                                    'company_name': share_c.share.company_name,
+                                    'convention_date': share_c.convention_date,
+                                    'accumulated_profit': share_c.accumulated_profit,
+                                    'revaluation': share_c.revaluation,
+                                    'cash_priority': share_c.cash_priority,
+                                    'level':share_c.level,
+                                    'is_open': share_c.share.is_open})
+    return render(request, 'bamzi/share_convention.html', {'share_conventions':share_convention_result})
 
 
 def update_share_data(request):
