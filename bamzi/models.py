@@ -80,14 +80,42 @@ class ShareConvention(models.Model):
     cash_priority = models.IntegerField(verbose_name="آورده نقدی", default=0)
 
     LEVELS = (
-        (1, 'مرحله پیشنهاد'),
-        (2, 'مرحله حسابرس'),
-        (3, 'مرحله مجوز'),
-        (4, 'مرحله دعوت'),
-        (5, 'مرحله تصمیمات'),
-        (6, 'مرحله ثبت'),
+        (1, 'پیشنهاد'),
+        (2, 'حسابرس'),
+        (3, 'مجوز'),
+        (4, 'دعوت'),
+        (5, 'تصمیمات'),
+        (6, 'ثبت'),
     )
     level = models.SmallIntegerField(verbose_name="مرحله", choices=LEVELS, blank=False)
 
     def __str__(self):
         return self.share.symbol_name
+
+
+class ConventionBenefit(models.Model):
+    share = models.ForeignKey(Share, on_delete=models.CASCADE, related_name="convention_benefit")
+    from_date = models.DateField(verbose_name="از تاریخ")
+    to_date = models.DateField(verbose_name="تا تاریخ", null=True, blank=True)
+    BANKS = (
+        (1, 'رفاه کارگران'),
+        (2, 'ملت'),
+        (3, 'تجارت'),
+        (4, 'صادرات'),
+        (5, 'ملی'),
+        (6, 'سجام'),
+    )
+    bank = models.SmallIntegerField(verbose_name="بانک", choices=BANKS)
+        
+    def __str__(self):
+        return "%(share)s - %(bank)s" % {'share': self.sahre, 'bank': BANKS[self.bank]}
+
+    
+class UserConventionBenefit(models.Model):
+    user = models.ForeignKey(User, on_delete=models.PROTECT, related_name="user_benefits")
+    convention_benefit = models.ForeignKey(ConventionBenefit, on_delete=models.CASCADE, related_name="user")
+    benefit_price = models.BigIntegerField(verbose_name="مبلغ سود")
+    got_it = models.BooleanField(verbose_name="تحویل گرفتم")
+        
+    def __str__(self):
+        return "%(user)s - %(convention_benefit)s" % {'user': self.user, 'convention_benefit': self.convention_benefit}

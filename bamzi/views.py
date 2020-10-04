@@ -102,7 +102,8 @@ def share_convention(request):
                                     'accumulated_profit': share_c.accumulated_profit,
                                     'revaluation': share_c.revaluation,
                                     'cash_priority': share_c.cash_priority,
-                                    'level':share_c.level,
+                                    'level': share_c.level,
+                                    'level_str': share_c.LEVELS[share_c.level][1],
                                     'is_open': share_c.share.is_open})
     return render(request, 'bamzi/share_convention.html', {'share_conventions':share_convention_result})
 

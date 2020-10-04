@@ -11,17 +11,17 @@
     <a href="{% url 'my_shares' username=request.user.username %}"><i class="fa fa-dashboard"></i> سهام من</a>
 </li>
 <li>
-    <a href="ui-elements.html"><i class="fa fa-desktop"></i> حق تقدم‌ها</a>
-</li>
-<li>
     <a class="active-menu" href="{% url 'share_convention' %}"><i class="fa fa-bar-chart-o"></i> افزایش سرمایه‌ها</a>
 </li>
 <li>
-    <a href="tab-panel.html"><i class="fa fa-qrcode"></i> Tabs & Panels</a>
+    <a href="ui-elements.html"><i class="fa fa-desktop"></i> حق تقدم‌ها</a>
+</li>
+<li>
+    <a href="tab-panel.html"><i class="fa fa-qrcode"></i> سهام مناسب خرید</a>
 </li>
 
 <li>
-    <a href="table.html"><i class="fa fa-table"></i> Responsive Tables</a>
+    <a href="table.html"><i class="fa fa-table"></i> سود مجامع</a>
 </li>
 <li>
     <a href="form.html"><i class="fa fa-edit"></i> Forms </a>
@@ -60,9 +60,9 @@
 </li>
 {% endblock %}
 
-{% block page_header %}داشبورد{% endblock %}
+{% block page_header %}افزایش سرمایه‌ها {% endblock %}
 
-{% block page_header_small %}افزایش سرمایه‌ها {% endblock %}
+{% comment %} {% block page_header_small %}افزایش سرمایه‌ها {% endblock %} {% endcomment %}
 
 {% block content %}
 <div class="row">
@@ -96,7 +96,7 @@
                                     <td>{{share.revaluation}}</td>
                                     <td>{{share.accumulated_profit}}</td>
                                     <td>{{share.cash_priority}}</td>
-                                    <td>{{share.level}}</td>
+                                    <td>{{share.level}} ({{share.level_str}})</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -119,36 +119,6 @@
     <script>
         $(document).ready(function () {
             $('#dataTables-example').dataTable();
-
-            $(function() {
-                $("#share_name").autocomplete({
-                    source: '/bamzi/shares-name/',
-                    select: function (event, ui) { //item selected
-                        AutoCompleteSelectHandlerShop(event, ui)
-                    },
-                    minLength: 2,
-                });
-            });
-
-            function AutoCompleteSelectHandlerShop(event, ui){
-                var selectedObj = ui.item;
-                $("#remove_share").show();
-                if(selectedObj.id){
-                    $("#share_name").attr("data-share", selectedObj.id);
-                    $("#share_id").val(selectedObj.id);
-                }
-                else{
-                    $("#share_name").attr("data-share", "");
-                    $("#share_id").val("");
-                }
-                var selectedObj = ui.item;
-            }
-            $("#remove_share").click(function(){
-                $("#share_name").val('');
-                $("#share_name").attr("data-share", "");
-                $("#remove_share").hide();
-            });
         });
     </script>
-    {% comment %} <script src="{% static 'bamzi/js/custom-scripts.js' %}"></script> {% endcomment %}
 {% endblock %}
