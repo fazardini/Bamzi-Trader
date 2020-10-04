@@ -1,5 +1,6 @@
 ﻿{% extends "bamzi/base.html" %}
 {% load static %}
+{% load jalali_tags %}
 
 {% block title %}افزایش سرمایه‌ها{% endblock %}
 
@@ -91,7 +92,7 @@
                                     <td><i class="fa fa-square text {% if share.is_open %}text-success{% else %}text-danger{% endif %}"></i>
                                      {{share.symbol_name}}</td>
                                     <td>{{share.company_name}}</td>
-                                    <td>{{share.convention_date}}</td>
+                                    <td>{{share.convention_date|to_jalali:'%y/%m/%d' }}</td>
                                     <td>{{share.revaluation}}</td>
                                     <td>{{share.accumulated_profit}}</td>
                                     <td>{{share.cash_priority}}</td>
