@@ -21,18 +21,20 @@ class Share(models.Model):
     is_open = models.BooleanField(verbose_name="وضعیت سهم", default=False)
 
     MARKET_TYPES = (
-        ('B1', 'بازار اول بورس'),
-        ('B2', 'بازار دوم بورس'),
-        ('F1', 'بازار اول فرابورس'),
-        ('F2', 'بازار دوم فرابورس'),
-        ('PR', 'بازار پایه قرمز'),
-        ('PO', 'بازار پایه نارنجی'),
-        ('PY', 'بازار پایه زرد'),
+        ('B1', 'بورس (اول)'),
+        ('B2', 'بورس (دوم)'),
+        ('F1', 'فرابورس (اول)'),
+        ('F2', 'فرابورس (دوم)'),
+        ('PR', 'پایه (قرمز)'),
+        ('PO', 'پایه (نارنجی)'),
+        ('PY', 'پایه (زرد)'),
     )
     market_type = models.CharField(verbose_name="نوع بازار", max_length=2, choices=MARKET_TYPES, null=True, blank=False)
     base_volume = models.BigIntegerField(verbose_name="حجم مبنا", null=True, blank=True)
     average_volume = models.BigIntegerField(verbose_name="حجم میانگین", null=True, blank=True)
     industry = models.ForeignKey(Industry, on_delete=models.SET_NULL, verbose_name="صنعت", related_name="shares", null=True, blank=False)
+    company_site = models.URLField(verbose_name="سایت شرکت", max_length=128, null=True, blank=True)
+    stock_affair = models.URLField(verbose_name="امور سهام", max_length=128, null=True, blank=True)
 
     def __str__(self):
         return self.symbol_name
@@ -134,7 +136,7 @@ class PrecedenceShare(models.Model):
     became_convert = models.BooleanField(verbose_name="تبدیل شد؟")
         
     def __str__(self):
-        return "%(share)s - %(convert)s" % {'share': self.sahre, 'convert': self.convert}
+        return self.sahre
 
 
 class UserPrecedenceShare(models.Model):
