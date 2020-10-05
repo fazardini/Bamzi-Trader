@@ -73,6 +73,7 @@ class UserShare(models.Model):
 
 
 class ShareConvention(models.Model):
+    """مدل افزایش سرمایه"""
     share = models.ForeignKey(Share, on_delete=models.CASCADE, related_name="convention")
     convention_date = models.DateField(verbose_name="تاریخ مجمع", null=True, blank=True)
     accumulated_profit = models.IntegerField(verbose_name="سود انباشته", default=0)
@@ -94,6 +95,7 @@ class ShareConvention(models.Model):
 
 
 class ConventionBenefit(models.Model):
+    """مدل سود مجامع"""
     share = models.ForeignKey(Share, on_delete=models.CASCADE, related_name="convention_benefit")
     from_date = models.DateField(verbose_name="از تاریخ")
     to_date = models.DateField(verbose_name="تا تاریخ", null=True, blank=True)
@@ -112,6 +114,7 @@ class ConventionBenefit(models.Model):
 
     
 class UserConventionBenefit(models.Model):
+    """مدل سود مجامع کاربر"""
     user = models.ForeignKey(User, on_delete=models.PROTECT, related_name="user_benefits")
     convention_benefit = models.ForeignKey(ConventionBenefit, on_delete=models.CASCADE, related_name="user")
     benefit_price = models.BigIntegerField(verbose_name="مبلغ سود")
@@ -119,3 +122,27 @@ class UserConventionBenefit(models.Model):
         
     def __str__(self):
         return "%(user)s - %(convention_benefit)s" % {'user': self.user, 'convention_benefit': self.convention_benefit}
+
+
+class PrecedenceShare(models.Model):
+    """مدل حق تقدم"""
+    share = models.ForeignKey(Share, on_delete=models.CASCADE, related_name="precedence_share")
+    main_share = models.ForeignKey(Share, on_delete=models.CASCADE, related_name="precedence_main_share")
+    from_date = models.DateField(verbose_name="از تاریخ", null=True, blank=True)
+    to_date = models.DateField(verbose_name="تا تاریخ", null=True, blank=True)
+    convert = models.BooleanField(verbose_name="تبدیل کنیم؟")
+    became_convert = models.BooleanField(verbose_name="تبدیل شد؟")
+        
+    def __str__(self):
+        return "%(share)s - %(convert)s" % {'share': self.sahre, 'convert': self.convert}
+
+
+class UserPrecedenceShare(models.Model):
+    """مدل حق تقدم‌های کاربر"""
+    user = models.ForeignKey(User, on_delete=models.PROTECT, related_name="user_precedence")
+    precedence_share = models.ForeignKey(PrecedenceShare, on_delete=models.CASCADE, related_name="user")
+    count = models.IntegerField(verbose_name="تعداد")
+    done = models.BooleanField(verbose_name="انجام شد")
+        
+    def __str__(self):
+        return "%(user)s - %(precedence_share)s" % {'user': self.user, 'precedence_share': self.precedence_share}
