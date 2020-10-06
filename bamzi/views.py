@@ -87,7 +87,9 @@ def my_shares(request, username):
                                     'count': u_share.count,
                                     'profit_loss':u_share.profit_loss,
                                     'target': u_share.target,
-                                    'is_open': u_share.share.is_open})
+                                    'is_open': u_share.share.is_open,
+                                    'market_type': u_share.share.get_market_type_display(),
+                                    'industry': u_share.share.industry.name})
     return render(request, 'bamzi/user_share.html', {'user_shares':user_shares_result})
 
 
@@ -103,8 +105,9 @@ def share_convention(request):
                                     'revaluation': share_c.revaluation,
                                     'cash_priority': share_c.cash_priority,
                                     'level': share_c.level,
-                                    'level_str': share_c.LEVELS[share_c.level][1],
-                                    'is_open': share_c.share.is_open})
+                                    'level_str': share_c.get_level_display(),
+                                    'is_open': share_c.share.is_open,
+                                    'industry': share_c.share.industry.name})
     return render(request, 'bamzi/share_convention.html', {'share_conventions':share_convention_result})
 
 

@@ -1,19 +1,19 @@
 ﻿{% extends "bamzi/base.html" %}
 {% load static %}
 
-{% block title %}سهام من{% endblock %}
+{% block title %} حق تقدم‌های من{% endblock %}
 
 {% block header_css %}{% endblock %}
 
 {% block active_menu %}
 <li>
-    <a class="active-menu" href="{% url 'my_shares' username=request.user.username %}"><i class="fa fa-dashboard"></i> سهام من</a>
+    <a href="{% url 'my_shares' username=request.user.username %}"><i class="fa fa-dashboard"></i> سهام من</a>
 </li>
 <li>
     <a href="{% url 'share_convention' %}"><i class="fa fa-bar-chart-o"></i> افزایش سرمایه‌ها</a>
 </li>
 <li>
-    <a href="ui-elements.html"><i class="fa fa-desktop"></i> حق تقدم‌های من</a>
+    <a class="active-menu" href="ui-elements.html"><i class="fa fa-desktop"></i> حق تقدم‌های من</a>
 </li>
 <li>
     <a href="tab-panel.html"><i class="fa fa-qrcode"></i> سهام مناسب خرید</a>

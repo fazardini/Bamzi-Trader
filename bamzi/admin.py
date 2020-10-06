@@ -41,6 +41,7 @@ class PrecedenceShareAdmin(ModelAdminJalaliMixin, admin.ModelAdmin):
     get_from_jalali.admin_order_field = 'from_date'
     get_to_jalali.short_description = 'تا تاریخ'
     get_to_jalali.admin_order_field = 'to_date'
+    search_fields = ('share__symbol_name', )
 
 
 @admin.register(ConventionBenefit)
@@ -56,6 +57,8 @@ class ConventionBenefitAdmin(ModelAdminJalaliMixin, admin.ModelAdmin):
     get_from_jalali.admin_order_field = 'from_date'
     get_to_jalali.short_description = 'تا تاریخ'
     get_to_jalali.admin_order_field = 'to_date'
+
+    search_fields = ('share__symbol_name', )
 
 
 admin.site.register(Industry)

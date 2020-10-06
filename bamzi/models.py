@@ -36,6 +36,10 @@ class Share(models.Model):
     company_site = models.URLField(verbose_name="سایت شرکت", max_length=128, null=True, blank=True)
     stock_affair = models.URLField(verbose_name="امور سهام", max_length=128, null=True, blank=True)
 
+
+    class Meta:
+        ordering = ['symbol_name']
+
     def __str__(self):
         return self.symbol_name
 
@@ -98,21 +102,21 @@ class ShareConvention(models.Model):
 
 class ConventionBenefit(models.Model):
     """مدل سود مجامع"""
-    share = models.ForeignKey(Share, on_delete=models.CASCADE, related_name="convention_benefit")
+    share = models.ForeignKey(Share, verbose_name="سهم", on_delete=models.CASCADE, related_name="convention_benefit")
     from_date = models.DateField(verbose_name="از تاریخ")
     to_date = models.DateField(verbose_name="تا تاریخ", null=True, blank=True)
     BANKS = (
+        (0, 'سجام'),
         (1, 'رفاه کارگران'),
         (2, 'ملت'),
         (3, 'تجارت'),
         (4, 'صادرات'),
         (5, 'ملی'),
-        (6, 'سجام'),
     )
     bank = models.SmallIntegerField(verbose_name="بانک", choices=BANKS)
         
     def __str__(self):
-        return "%(share)s - %(bank)s" % {'share': self.sahre, 'bank': BANKS[self.bank]}
+        return "%(share)s - %(bank)s" % {'share': self.share, 'bank': self.BANKS[self.bank][1]}
 
     
 class UserConventionBenefit(models.Model):
@@ -128,15 +132,15 @@ class UserConventionBenefit(models.Model):
 
 class PrecedenceShare(models.Model):
     """مدل حق تقدم"""
-    share = models.ForeignKey(Share, on_delete=models.CASCADE, related_name="precedence_share")
-    main_share = models.ForeignKey(Share, on_delete=models.CASCADE, related_name="precedence_main_share")
+    share = models.ForeignKey(Share, verbose_name="حق تقدم", on_delete=models.CASCADE, related_name="precedence_share")
+    main_share = models.ForeignKey(Share, verbose_name="سهم اصلی", on_delete=models.CASCADE, related_name="precedence_main_share")
     from_date = models.DateField(verbose_name="از تاریخ", null=True, blank=True)
     to_date = models.DateField(verbose_name="تا تاریخ", null=True, blank=True)
     convert = models.BooleanField(verbose_name="تبدیل کنیم؟")
     became_convert = models.BooleanField(verbose_name="تبدیل شد؟")
         
     def __str__(self):
-        return self.sahre
+        return self.share.symbol_name
 
 
 class UserPrecedenceShare(models.Model):

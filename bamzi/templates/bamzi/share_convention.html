@@ -14,7 +14,7 @@
     <a class="active-menu" href="{% url 'share_convention' %}"><i class="fa fa-bar-chart-o"></i> افزایش سرمایه‌ها</a>
 </li>
 <li>
-    <a href="ui-elements.html"><i class="fa fa-desktop"></i> حق تقدم‌ها</a>
+    <a href="ui-elements.html"><i class="fa fa-desktop"></i> حق تقدم‌های من</a>
 </li>
 <li>
     <a href="tab-panel.html"><i class="fa fa-qrcode"></i> سهام مناسب خرید</a>
@@ -79,6 +79,7 @@
                             <tr>
                                 <th>سهم</th>
                                 <th>شرکت</th>
+                                <th>صنعت</th>
                                 <th>تاریخ مجمع</th>
                                 <th>تجدید ارزیابی</th>
                                 <th>سود انباشته</th>
@@ -92,6 +93,7 @@
                                     <td><i class="fa fa-square text {% if share.is_open %}text-success{% else %}text-danger{% endif %}"></i>
                                      {{share.symbol_name}}</td>
                                     <td>{{share.company_name}}</td>
+                                    <td>{{share.industry}}</td>
                                     <td>{{share.convention_date|to_jalali:'%y/%m/%d' }}</td>
                                     <td>{{share.revaluation}}</td>
                                     <td>{{share.accumulated_profit}}</td>
