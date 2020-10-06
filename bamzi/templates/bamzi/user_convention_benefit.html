@@ -1,13 +1,14 @@
 ﻿{% extends "bamzi/base.html" %}
 {% load static %}
+{% load jalali_tags %}
 
-{% block title %}سهام من{% endblock %}
+{% block title %} سود مجامع من{% endblock %}
 
 {% block header_css %}{% endblock %}
 
 {% block active_menu %}
 <li>
-    <a class="active-menu" href="{% url 'my_shares' username=request.user.username %}"><i class="fa fa-dashboard"></i> سهام من</a>
+    <a href="{% url 'my_shares' username=request.user.username %}"><i class="fa fa-dashboard"></i> سهام من</a>
 </li>
 <li>
     <a href="{% url 'share_convention' %}"><i class="fa fa-bar-chart-o"></i> افزایش سرمایه‌ها</a>
@@ -16,7 +17,7 @@
     <a href="{% url 'my_precedence_shares' username=request.user.username %}"><i class="fa fa-desktop"></i> حق تقدم‌های من</a>
 </li>
 <li>
-    <a href="{% url 'my_convention_benefit' username=request.user.username %}"><i class="fa fa-table"></i> سود مجامع</a>
+    <a class="active-menu" href="{% url 'my_convention_benefit' username=request.user.username %}"><i class="fa fa-table"></i> سود مجامع</a>
 </li>
 <li>
     <a href="form.html"><i class="fa fa-sitemap"></i> صنایع من</a>
@@ -32,7 +33,7 @@
 </li>
 {% endblock %}
 
-{% block page_header %}سهام من{% endblock %}
+{% block page_header %}سود مجامع من{% endblock %}
 
 {% comment %} {% block page_header_small %}سهام من{% endblock %} {% endcomment %}
 
@@ -41,11 +42,11 @@
     <div class="col-lg-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                افزودن سهم
+                افزودن سود مجمع
             </div>
             <div class="panel-body">
                 <div class="row">
-                    <form role="form" action="{% url 'my_shares' username=request.user.username %}" method="POST">
+                    <form role="form" action="{% url 'my_convention_benefit' username=request.user.username %}" method="POST">
                     {% csrf_token %}
                         <div class="form-group col-lg-6">
                             <label>سهم</label>
@@ -54,17 +55,9 @@
                             <span class="glyphicon glyphicon-remove d-none" id="remove_share"></span>
                         </div>
                         <div class="form-group col-lg-6">
-                            <label>قیمت سربه‌سر</label>
-                            <input class="form-control" placeholder="به ریال" name="basic_price" required>
+                            <label>مبلغ سود</label>
+                            <input class="form-control" name="benefit_price" required>
                         </div>
-                        <div class="form-group col-lg-6">
-                            <label>تعداد</label>
-                            <input class="form-control" type="number" name="count" required>
-                        </div>
-                        {% comment %} <div class="form-group col-lg-6">
-                            <label>تاریخ خرید</label>
-                            <input class="form-control" type="date">
-                        </div> {% endcomment %}
                         <div class="col-md-12">
                             <button type="submit" class="btn btn-primary col-md-3">ثبت</button>
                         </div>
@@ -80,7 +73,7 @@
         <!-- Advanced Tables -->
         <div class="panel panel-default">
             <div class="panel-heading">
-                    سهام من
+                    سود مجامع من
             </div>
             <div class="panel-body">
                 <div class="table-responsive">
@@ -88,31 +81,21 @@
                         <thead>
                             <tr>
                                 <th>سهم</th>
-                                <th>شرکت</th>
-                                <th>صنعت</th>
-                                <th>بازار</th>
-                                <th>سربه‌سر</th>
-                                <th>آخرین قیمت</th>
-                                <th>قیمت پایانی</th>
-                                <th>تعداد</th>
-                                <th>درصد سود/ضرر</th>
-                                <th>درصد هدف</th>
+                                <th>مبلغ سود</th>
+                                <th>از تاریخ</th>
+                                <th>تا تاریخ</th>
+                                <th>بانک</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for share in user_shares %}
-                                <tr class="{% if share.target >= 100 %}success{% else %}odd gradeA{% endif %}">
+                            {% for share in user_convention_benefits %}
+                                <tr class="odd gradeA">
                                     <td><i class="fa fa-square text {% if share.is_open %}text-success{% else %}text-danger{% endif %}"></i>
                                      {{share.symbol_name}}</td>
-                                    <td>{{share.company_name}}</td>
-                                    <td>{{share.industry}}</td>
-                                    <td>{{share.market_type}}</td>
-                                    <td>{{share.basic_price}}</td>
-                                    <td>{{share.last_price}}</td>
-                                    <td>{{share.final_price}}</td>
-                                    <td>{{share.count}}</td>
-                                    <td>{{share.profit_loss}}</td>
-                                    <td>{{share.target}}</td>
+                                    <td>{{share.benefit_price}}</td>
+                                    <td>{{share.from_date|to_jalali:'%y/%m/%d'}}</td>
+                                    <td>{{share.to_date|to_jalali:'%y/%m/%d'}}</td>
+                                    <td>{{share.bank}}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -138,7 +121,7 @@
 
             $(function() {
                 $("#share_name").autocomplete({
-                    source: '/bamzi/shares-name/',
+                    source: '/bamzi/convention-benefit-name/',
                     select: function (event, ui) { //item selected
                         AutoCompleteSelectHandlerShop(event, ui)
                     },

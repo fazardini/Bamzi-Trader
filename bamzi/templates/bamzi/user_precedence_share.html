@@ -17,16 +17,14 @@
     <a class="active-menu" href="{% url 'my_precedence_shares' username=request.user.username %}"><i class="fa fa-desktop"></i> حق تقدم‌های من</a>
 </li>
 <li>
-    <a href="tab-panel.html"><i class="fa fa-qrcode"></i> سهام مناسب خرید</a>
-</li>
-
-<li>
-    <a href="table.html"><i class="fa fa-table"></i> سود مجامع</a>
+    <a href="{% url 'my_convention_benefit' username=request.user.username %}"><i class="fa fa-table"></i> سود مجامع</a>
 </li>
 <li>
     <a href="form.html"><i class="fa fa-sitemap"></i> صنایع من</a>
 </li>
-
+<li>
+    <a href="tab-panel.html"><i class="fa fa-qrcode"></i> سهام مناسب خرید</a>
+</li>
 <li>
     <a href="#"><i class="fa fa-sitemap"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
 </li>
@@ -60,10 +58,6 @@
                             <label>تعداد</label>
                             <input class="form-control" type="number" name="count" required>
                         </div>
-                        {% comment %} <div class="form-group col-lg-6">
-                            <label>تاریخ خرید</label>
-                            <input class="form-control" type="date">
-                        </div> {% endcomment %}
                         <div class="col-md-12">
                             <button type="submit" class="btn btn-primary col-md-3">ثبت</button>
                         </div>

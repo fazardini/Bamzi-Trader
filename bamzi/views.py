@@ -2,7 +2,7 @@ from django.shortcuts import render
 import requests
 import json
 from BamziTrader.settings import BASE_DIR
-from bamzi.models import Share, UserShare, ShareConvention, UserPrecedenceShare, PrecedenceShare
+from bamzi.models import *
 from bamzi.helpers.text_helpers import *
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
@@ -60,6 +60,23 @@ def precedence_shares_name(request):
     if request.is_ajax():
         searched_text = request.GET.get('term', '')
         shares = PrecedenceShare.objects.filter(share__symbol_name__icontains=searched_text).distinct().values(
+            'id', 'share__symbol_name').order_by('share__symbol_name')[:10]
+        results = []
+        for share in shares:
+            share_json = {'label': share['share__symbol_name'], 'value': share['share__symbol_name'],
+                          'id': share['id']}
+            results.append(share_json)
+        data = json.dumps(results)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
+
+
+def convention_benefit_name(request):
+    if request.is_ajax():
+        searched_text = request.GET.get('term', '')
+        shares = ConventionBenefit.objects.filter(share__symbol_name__icontains=searched_text).distinct().values(
             'id', 'share__symbol_name').order_by('share__symbol_name')[:10]
         results = []
         for share in shares:
@@ -139,6 +156,33 @@ def my_precedence_shares(request, username):
                                     'is_open': up_share.precedence_share.share.is_open})
 
     return render(request, 'bamzi/user_precedence_share.html', {'user_precedence_shares':result})
+
+
+def my_convention_benefit(request, username):
+    user = request.user
+    access = (user.username == username)
+    if not access:
+        return render(request, 'bamzi/user_convention_benefit.html', {})
+    if request.method == 'POST':
+        convention_benefit_id = request.POST.get('share_id', '')
+        benefit_price = int(request.POST.get('benefit_price', 0))
+        convention_benefit = ConventionBenefit.objects.filter(pk=convention_benefit_id).first()
+        if convention_benefit:
+            user_convention_benefit = UserConventionBenefit.objects.create(user=user,
+            convention_benefit=convention_benefit, benefit_price=benefit_price, got_it=False)
+    
+    user_convention_benefits = UserConventionBenefit.objects.filter(user=user)
+    result = []
+    for benefit in user_convention_benefits:
+        result.append({ 'id': benefit.id, 
+                                    'symbol_name': benefit.convention_benefit.share.symbol_name,
+                                    'benefit_price': benefit.benefit_price,
+                                    'from_date': benefit.convention_benefit.from_date,
+                                    'to_date': benefit.convention_benefit.to_date,
+                                    'bank': benefit.convention_benefit.get_bank_display(),
+                                    'is_open': benefit.convention_benefit.share.is_open})
+
+    return render(request, 'bamzi/user_convention_benefit.html', {'user_convention_benefits':result})
 
 
 def share_convention(request):
