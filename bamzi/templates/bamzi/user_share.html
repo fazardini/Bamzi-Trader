@@ -13,7 +13,7 @@
     <a href="{% url 'share_convention' %}"><i class="fa fa-bar-chart-o"></i> افزایش سرمایه‌ها</a>
 </li>
 <li>
-    <a href="ui-elements.html"><i class="fa fa-desktop"></i> حق تقدم‌های من</a>
+    <a href="{% url 'my_precedence_shares' username=request.user.username %}"><i class="fa fa-desktop"></i> حق تقدم‌های من</a>
 </li>
 <li>
     <a href="tab-panel.html"><i class="fa fa-qrcode"></i> سهام مناسب خرید</a>

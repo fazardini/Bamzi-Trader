@@ -2,7 +2,7 @@ from django.shortcuts import render
 import requests
 import json
 from BamziTrader.settings import BASE_DIR
-from bamzi.models import Share, UserShare, ShareConvention
+from bamzi.models import Share, UserShare, ShareConvention, UserPrecedenceShare, PrecedenceShare
 from bamzi.helpers.text_helpers import *
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
@@ -56,6 +56,23 @@ def shares_name(request):
     return HttpResponse(data, mimetype)
 
 
+def precedence_shares_name(request):
+    if request.is_ajax():
+        searched_text = request.GET.get('term', '')
+        shares = PrecedenceShare.objects.filter(share__symbol_name__icontains=searched_text).distinct().values(
+            'id', 'share__symbol_name').order_by('share__symbol_name')[:10]
+        results = []
+        for share in shares:
+            share_json = {'label': share['share__symbol_name'], 'value': share['share__symbol_name'],
+                          'id': share['id']}
+            results.append(share_json)
+        data = json.dumps(results)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
+
+
 def my_shares(request, username):
     user = request.user
     access = (user.username == username)
@@ -75,7 +92,7 @@ def my_shares(request, username):
                 relative_max_price=basic_price,
                 relative_min_price=basic_price)
     
-    user_shares = UserShare.objects.all()
+    user_shares = UserShare.objects.filter(user=user)
     user_shares_result = []
     for u_share in user_shares:
         user_shares_result.append({ 'id': u_share.id, 
@@ -91,6 +108,37 @@ def my_shares(request, username):
                                     'market_type': u_share.share.get_market_type_display(),
                                     'industry': u_share.share.industry.name})
     return render(request, 'bamzi/user_share.html', {'user_shares':user_shares_result})
+
+
+def my_precedence_shares(request, username):
+    user = request.user
+    access = (user.username == username)
+    if not access:
+        return render(request, 'bamzi/user_precedence_share.html', {})
+    if request.method == 'POST':
+        precedence_share_id = request.POST.get('share_id', '')
+        count = int(request.POST.get('count', 0))
+        precedence_share = PrecedenceShare.objects.filter(pk=precedence_share_id).first()
+        if precedence_share:
+            user_precedence_share = UserPrecedenceShare.objects.create(user=user,
+            precedence_share=precedence_share, count=count, done=False)
+    
+    user_precedence_shares = UserPrecedenceShare.objects.filter(user=user)
+    result = []
+    for up_share in user_precedence_shares:
+        result.append({ 'id': up_share.id, 
+                                    'symbol_name': up_share.precedence_share.share.symbol_name,
+                                    'main_share': up_share.precedence_share.main_share.symbol_name,
+                                    'last_price': up_share.precedence_share.share.last_price,
+                                    'main_last_price': up_share.precedence_share.main_share.last_price,
+                                    'count': up_share.count,
+                                    'from_date': up_share.precedence_share.from_date,
+                                    'to_date': up_share.precedence_share.to_date,
+                                    'convert': up_share.precedence_share.convert,
+                                    'stock_affair': up_share.precedence_share.main_share.stock_affair,
+                                    'is_open': up_share.precedence_share.share.is_open})
+
+    return render(request, 'bamzi/user_precedence_share.html', {'user_precedence_shares':result})
 
 
 def share_convention(request):
