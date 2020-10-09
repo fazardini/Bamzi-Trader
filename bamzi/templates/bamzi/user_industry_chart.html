@@ -1,0 +1,91 @@
+﻿{% extends "bamzi/base.html" %}
+{% load static %}
+
+{% block title %}صنایع من{% endblock %}
+
+{% block header_css %}{% endblock %}
+
+{% block active_menu %}
+<li>
+    <a href="{% url 'my_shares' username=request.user.username %}"><i class="fa fa-dashboard"></i> سهام من</a>
+</li>
+<li>
+    <a href="{% url 'share_convention' %}"><i class="fa fa-bar-chart-o"></i> افزایش سرمایه‌ها</a>
+</li>
+<li>
+    <a href="{% url 'my_precedence_shares' username=request.user.username %}"><i class="fa fa-desktop"></i> حق تقدم‌های من</a>
+</li>
+<li>
+    <a href="{% url 'my_convention_benefit' username=request.user.username %}"><i class="fa fa-table"></i> سود مجامع</a>
+</li>
+<li>
+    <a class="active-menu" href="{% url 'my_industry' username=request.user.username %}"><i class="fa fa-sitemap"></i> صنایع من</a>
+</li>
+<li>
+    <a href="tab-panel.html"><i class="fa fa-qrcode"></i> سهام مناسب خرید</a>
+</li>
+<li>
+    <a href="#"><i class="fa fa-sitemap"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
+</li>
+<li>
+    <a href="empty.html"><i class="fa fa-fw fa-file"></i> Empty Page</a>
+</li>
+{% endblock %}
+
+{% block page_header %}صنایع من{% endblock %}
+
+{% block content %}
+<div class="row">                     
+    <div class="col-md-6 col-sm-12 col-xs-12">                     
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                صنایع من
+            </div>
+            <div class="panel-body">                            
+			    <div id="morris-donut-chart"></div>
+                <div>
+                    {% for key,value in industry_percent.items %}
+                        <p>{{key}}: {{value}}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>            
+    </div>
+    <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                صنایعی که ندارم
+            </div>
+            <div class="panel-body">
+                {% for industry in empty_industry %}
+                    <p class="col-md-6 col-sm-12 col-xs-12">{{industry}}</p>
+                {% endfor %}
+            </div>
+            <div class="panel-footer">
+                از صفحه سهام مناسب خرید میتوانید سهام صنعت موردنظر را برای خرید انتخاب کنید.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer_js %}
+    <script>
+        $(document).ready(function () {
+            Morris.Donut({
+                element: 'morris-donut-chart',
+                data: [
+                {% for key,value in industry_percent.items %}{
+                    label: '{{key}}',
+                    value: {{value}}
+                },
+                {% endfor %}
+                ],
+				colors: [
+                    '#00cc00','#ff0066','#00ffff','#660066','#6666ff','#ffff00','#ff9933','#ff3300'
+                ],
+                resize: true
+            });
+        });
+    </script>
+{% endblock %}

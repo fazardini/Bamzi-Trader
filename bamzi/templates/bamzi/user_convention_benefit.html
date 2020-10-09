@@ -20,7 +20,7 @@
     <a class="active-menu" href="{% url 'my_convention_benefit' username=request.user.username %}"><i class="fa fa-table"></i> سود مجامع</a>
 </li>
 <li>
-    <a href="form.html"><i class="fa fa-sitemap"></i> صنایع من</a>
+    <a href="{% url 'my_industry' username=request.user.username %}"><i class="fa fa-sitemap"></i> صنایع من</a>
 </li>
 <li>
     <a href="tab-panel.html"><i class="fa fa-qrcode"></i> سهام مناسب خرید</a>

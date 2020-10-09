@@ -9,6 +9,7 @@ urlpatterns = [
     path('shares/<username>/', my_shares, name='my_shares'),
     path('precedence-shares/<username>/', my_precedence_shares, name='my_precedence_shares'),
     path('convention-benefit/<username>/', my_convention_benefit, name='my_convention_benefit'),
+    path('industry-chart/<username>/', my_industry, name='my_industry'),
 
     path('shares-name/', shares_name, name='shares_name'),
     path('precedence-shares-name/', precedence_shares_name, name='precedence_shares_name'),

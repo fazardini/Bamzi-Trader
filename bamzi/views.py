@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.urls import reverse
+from django.db.models import Sum, F
 
 
 def user_login(request):
@@ -183,6 +184,25 @@ def my_convention_benefit(request, username):
                                     'is_open': benefit.convention_benefit.share.is_open})
 
     return render(request, 'bamzi/user_convention_benefit.html', {'user_convention_benefits':result})
+
+
+def my_industry(request, username):
+    user = request.user
+    access = (user.username == username)
+    if not access:
+        return render(request, 'bamzi/user_industry_chart.html', {})
+    result = UserShare.objects.filter(user=user).values('share__industry__name').annotate(
+        total_price=Sum(F('count')*F('share__final_price'),
+        output_field=models.FloatField())
+    )
+    total_share_price = sum(item['total_price'] for item in result)
+    industry_percent = {}
+    # user_industry = []
+    for item in result:
+        industry_percent[item['share__industry__name']] = round(item['total_price'] / total_share_price * 100, 2)
+        # user_industry.append(item['share__industry__name'])
+    empty_industry = Industry.objects.exclude(name__in=industry_percent).values_list('name', flat=True).distinct()
+    return render(request, 'bamzi/user_industry_chart.html', {'empty_industry': empty_industry, 'industry_percent': industry_percent})
 
 
 def share_convention(request):
