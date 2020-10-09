@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.urls import reverse
-from django.db.models import Sum, F
+from django.db.models import Sum, F, Count
 
 
 def user_login(request):
@@ -197,11 +197,9 @@ def my_industry(request, username):
     )
     total_share_price = sum(item['total_price'] for item in result)
     industry_percent = {}
-    # user_industry = []
     for item in result:
         industry_percent[item['share__industry__name']] = round(item['total_price'] / total_share_price * 100, 2)
-        # user_industry.append(item['share__industry__name'])
-    empty_industry = Industry.objects.exclude(name__in=industry_percent).values_list('name', flat=True).distinct()
+    empty_industry = Industry.objects.exclude(name__in=industry_percent).annotate(num_shares=Count('shares')).order_by('-num_shares').values('name', 'num_shares')
     return render(request, 'bamzi/user_industry_chart.html', {'empty_industry': empty_industry, 'industry_percent': industry_percent})
 
 
@@ -238,6 +236,8 @@ def update_share_data(request):
                 share = Share.objects.create(tse_id=share_data[0])
                 share.symbol_name = tn.normalize_text(share_data[2])
                 share.company_name = tn.normalize_text(share_data[3])
+                industry = Industry.objects.filter(code=int(share_data[18])).first()
+                share.industry = industry
             
             share.last_price = int(share_data[7])
             share.final_price = int(share_data[6])
@@ -255,4 +255,4 @@ def update_share_data(request):
                 user_share.relative_min_price = min(share.final_price, user_share.relative_min_price)
                 user_share.save()
 
-    return render(request, 'bamzi/index.html', {'share_data': share_data})
+    return render(request, 'bamzi/chart.html', {'share_data': share_data})

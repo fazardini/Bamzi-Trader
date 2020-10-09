@@ -2,7 +2,9 @@ from django.contrib.auth.models import User
 from django.db import models
 
 class Industry(models.Model):
+    # compelete with http://www.tsetmc.com/Loader.aspx?ParTree=111C1213 
     name = models.CharField(verbose_name="نام صنعت", max_length=128)
+    code = models.IntegerField(verbose_name="کد")
     def __str__(self):
         return self.name
 
