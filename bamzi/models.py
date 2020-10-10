@@ -55,6 +55,7 @@ class UserShare(models.Model):
     relative_min_price = models.IntegerField(verbose_name="کمترین قیمت نسبی", null=True, blank=True)
     buy_date = models.DateField(verbose_name="تاریخ خرید", null=True, blank=True, auto_now_add=True)
     sell_date = models.DateField(verbose_name="تاریخ فروش", null=True, blank=True)
+    got_averaged = models.BooleanField(verbose_name="میانگین گرفته", default=False)
 
     @property
     def profit_loss(self):
@@ -150,7 +151,13 @@ class UserPrecedenceShare(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT, related_name="user_precedence")
     precedence_share = models.ForeignKey(PrecedenceShare, on_delete=models.CASCADE, related_name="user")
     count = models.IntegerField(verbose_name="تعداد")
-    done = models.BooleanField(verbose_name="انجام شد")
+
+    ACTS = (
+        (0, 'هیچی'),
+        (1, 'فروش'),
+        (2, 'تبدیل'),
+    )
+    act = models.SmallIntegerField(verbose_name="اقدام", default=0, choices=ACTS)
         
     def __str__(self):
         return "%(user)s - %(precedence_share)s" % {'user': self.user, 'precedence_share': self.precedence_share}

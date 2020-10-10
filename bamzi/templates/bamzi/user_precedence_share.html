@@ -29,8 +29,6 @@
 
 {% block page_header %}حق تقدم‌های من{% endblock %}
 
-{% comment %} {% block page_header_small %}سهام من{% endblock %} {% endcomment %}
-
 {% block content %}
 <div class="row">
     <div class="col-lg-12">
@@ -83,30 +81,69 @@
                                 <th>تا تاریخ</th>
                                 <th>امور سهام</th>
                                 <th>تبدیل/فروش</th>
+                                <th>اقدام من</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for share in user_precedence_shares %}
-                                <tr class="{% if not share.convert %}danger{% else %}odd gradeA{% endif %}">
+                                <tr class="{% if not share.convert %}danger{% else %}odd gradeA{% endif %}" data-edit-id={{share.id}}>
                                     <td><i class="fa fa-square text {% if share.is_open %}text-success{% else %}text-danger{% endif %}"></i>
-                                     {{share.symbol_name}}</td>
+                                     <span class="symbol_name">{{share.symbol_name}}</span></td>
                                     <td>{{share.main_share}}</td>
-                                    <td>{{share.count}}</td>
-                                    <td>{{share.last_price}}</td>
-                                    <td>{{share.main_last_price}}</td>
+                                    <td class="text-center count">{{share.count}}</td>
+                                    <td class="text-center">{{share.last_price}}</td>
+                                    <td class="text-center">{{share.main_last_price}}</td>
                                     <td>{{share.from_date|to_jalali:'%y/%m/%d'}}</td>
                                     <td>{{share.to_date|to_jalali:'%y/%m/%d'}}</td>
                                     <td>{% if share.stock_affair %}{{share.stock_affair}}{% endif %}</td>
                                     <td>{% if share.convert %}تبدیل{% else %}فروش{% endif %}</td>
+                                    <td class="act">{{share.act}}</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm edit-share-btn" data-toggle="modal" data-target="#myModal">
+                                            <i class="fa fa-edit"></i>
+                                        </button>
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
-                
             </div>
         </div>
         <!--End Advanced Tables -->
+    </div>
+</div>
+<div class="panel-body">
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">ویرایش حق تقدم</h4>
+                </div>
+                <form role="form" id="ModalForm" action="" method="POST">
+                    <div class="modal-body col-lg-12">
+                        {% csrf_token %}
+                            <div class="form-group col-lg-6">
+                                <label>تعداد</label>
+                                <input id="count_edit" class="form-control" type="number" name="count" required>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label>اقدام من</label>
+                                <select class="form-control" id="act_select" name="act">
+                                    <option value=0>هیچی</option>
+                                    <option value=1>فروش</option>
+                                    <option value=2>تبدیل</option>
+                                </select>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">ثبت تغییرات</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">انصراف</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -148,6 +185,23 @@
                 $("#share_name").val('');
                 $("#share_name").attr("data-share", "");
                 $("#remove_share").hide();
+            });
+            $(".edit-share-btn").click(function(){
+                var tr = $(this).closest('tr');
+                var symbol_name = tr.find(".symbol_name").html();
+                var share_id = tr.attr("data-edit-id")
+                $('#myModalLabel').html('ویرایش حق‌تقدم '+symbol_name);
+                var count = tr.find(".count").html();
+                $('#count_edit').val(count);
+                var act = tr.find(".act").html();
+                var $dd = $('#act');
+                var $options = $('option', $dd);
+                $options.each(function() {
+                if ($(this).text() == act)
+                    $(this).select(); // This is where my problem is
+                });
+                var edit_url = '/bamzi/user-precedence-shares/'+share_id+'/';
+                $("#ModalForm").attr('action', edit_url);
             });
         });
     </script>

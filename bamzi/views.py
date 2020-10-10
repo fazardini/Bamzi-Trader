@@ -140,6 +140,18 @@ def edit_user_share(request, share_id):
     return HttpResponseRedirect(reverse('my_shares', kwargs={'username': request.user.username}))
 
 
+def edit_user_precedence_shares(request, share_id):
+    if request.method == 'POST':
+        user_precedence_share = UserPrecedenceShare.objects.filter(pk=share_id, user=request.user).first()
+        if user_precedence_share:
+            count = request.POST.get('count', 0)
+            act = request.POST.get('act', 0)
+            user_precedence_share.count = count
+            user_precedence_share.act = act
+            user_precedence_share.save()
+    return HttpResponseRedirect(reverse('my_precedence_shares', kwargs={'username': request.user.username}))
+
+
 def my_precedence_shares(request, username):
     user = request.user
     access = (user.username == username)
@@ -151,7 +163,7 @@ def my_precedence_shares(request, username):
         precedence_share = PrecedenceShare.objects.filter(pk=precedence_share_id).first()
         if precedence_share:
             user_precedence_share = UserPrecedenceShare.objects.create(user=user,
-            precedence_share=precedence_share, count=count, done=False)
+            precedence_share=precedence_share, count=count)
     
     user_precedence_shares = UserPrecedenceShare.objects.filter(user=user)
     result = []
@@ -166,7 +178,8 @@ def my_precedence_shares(request, username):
                                     'to_date': up_share.precedence_share.to_date,
                                     'convert': up_share.precedence_share.convert,
                                     'stock_affair': up_share.precedence_share.main_share.stock_affair,
-                                    'is_open': up_share.precedence_share.share.is_open})
+                                    'is_open': up_share.precedence_share.share.is_open,
+                                    'act': up_share.get_act_display()})
 
     return render(request, 'bamzi/user_precedence_share.html', {'user_precedence_shares':result})
 
