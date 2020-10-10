@@ -1,0 +1,94 @@
+﻿{% extends "bamzi/base.html" %}
+{% load static %}
+
+{% block title %}سهام کاربران{% endblock %}
+
+{% block header_css %}{% endblock %}
+
+{% block active_menu %}
+<li>
+    <a class="active-menu" href="{% url 'admin_user_shares' %}"><i class="fa fa-dashboard"></i> سهام کاربران</a>
+</li>
+<li>
+    <a href="{% url 'admin_precedence_shares' %}"><i class="fa fa-desktop"></i> حق تقدم‌های کاربران</a>
+</li>
+<li>
+    <a href="{% url 'admin_convention_benefit' %}"><i class="fa fa-table"></i> سود مجامع</a>
+</li>
+{% endblock %}
+
+{% block page_header %}سهام کاربران{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <!-- Advanced Tables -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                    سهام کاربران
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="dataTables-example">
+                        <thead>
+                            <tr>
+                                <th>کاربر</th>
+                                <th class="min-width-50">سهم</th>
+                                <th>شرکت</th>
+                                <th>صنعت</th>
+                                <th>بازار</th>
+                                <th>سربه‌سر</th>
+                                <th>آخرین قیمت</th>
+                                <th>قیمت پایانی</th>
+                                <th>تعداد</th>
+                                <th>درصد سود/ضرر</th>
+                                <th>درصد هدف</th>
+                                <th>میانگین</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for share in user_shares %}
+                                <tr class="
+                                {% if share.target >= 100 %}
+                                    danger
+                                {% elif share.got_averaged and share.profit_loss > 0 %}
+                                    info
+                                {% elif share.profit_loss < -20 %}
+                                    warning
+                                {% endif %}" data-edit-id={{share.id}}>
+                                    <td>{{share.user}}</td>
+                                    <td><i class="fa fa-square text {% if share.is_open %}text-success{% else %}text-danger{% endif %}"></i>
+                                     <span class="symbol_name">{{share.symbol_name}}</span></td>
+                                    <td>{{share.company_name}}</td>
+                                    <td>{{share.industry}}</td>
+                                    <td>{{share.market_type}}</td>
+                                    <td class="text-center basic_price">{{share.basic_price}}</td>
+                                    <td class="text-center">{{share.last_price}}</td>
+                                    <td class="text-center">{{share.final_price}}</td>
+                                    <td class="text-center count">{{share.count}}</td>
+                                    <td class="text-center {% if share.profit_loss >= 0 %}text-success{% else %}text-danger{% endif %}">{{share.profit_loss}}</td>
+                                    <td class="text-center">{{share.target}}</td>
+                                    <td class="text-center got_averaged">{% if share.got_averaged %}<i class="fa fa-check-square text-success"></i>{% endif %}</td>
+                                 </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--End Advanced Tables -->
+    </div>
+</div>
+{% endblock %}
+
+{% block footer_js %}
+    <!-- Custom Js -->
+
+    <script src="{% static 'bamzi/js/dataTables/jquery.dataTables.js' %}" ></script>
+    <script src="{% static 'bamzi/js/dataTables/dataTables.bootstrap.js' %}" ></script>
+    <script>
+        $(document).ready(function () {
+            $('#dataTables-example').dataTable();
+        });
+    </script>
+{% endblock %}

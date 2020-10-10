@@ -95,7 +95,7 @@ def my_shares(request, username):
     user = request.user
     access = (user.username == username)
     if not access:
-        return render(request, 'bamzi/user_share.html', {})
+        return HttpResponseRedirect(reverse('login'))
     if request.method == 'POST':
         share_id = request.POST.get('share_id', '')
         count = request.POST.get('count', 0)
@@ -169,12 +169,11 @@ def edit_user_convention_benefit(request, share_id):
     return HttpResponseRedirect(reverse('my_convention_benefit', kwargs={'username': request.user.username}))
 
 
-
 def my_precedence_shares(request, username):
     user = request.user
     access = (user.username == username)
     if not access:
-        return render(request, 'bamzi/user_precedence_share.html', {})
+        return HttpResponseRedirect(reverse('login'))
     if request.method == 'POST':
         precedence_share_id = request.POST.get('share_id', '')
         count = int(request.POST.get('count', 0))
@@ -206,7 +205,7 @@ def my_convention_benefit(request, username):
     user = request.user
     access = (user.username == username)
     if not access:
-        return render(request, 'bamzi/user_convention_benefit.html', {})
+        return HttpResponseRedirect(reverse('login'))
     if request.method == 'POST':
         convention_benefit_id = request.POST.get('share_id', '')
         benefit_price = int(request.POST.get('benefit_price', 0))
@@ -234,7 +233,7 @@ def my_industry(request, username):
     user = request.user
     access = (user.username == username)
     if not access:
-        return render(request, 'bamzi/user_industry_chart.html', {})
+        return HttpResponseRedirect(reverse('login'))
     result = UserShare.objects.filter(user=user).values('share__industry__name').annotate(
         total_price=Sum(F('count')*F('share__final_price'),
         output_field=models.FloatField())

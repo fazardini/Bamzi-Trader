@@ -20,4 +20,5 @@ from django.urls.conf import include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('bamzi/', include('bamzi.urls')),
+    path('bamzi-admin/', include('bamzi.admin_urls')),
 ]

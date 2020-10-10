@@ -1,0 +1,86 @@
+﻿{% extends "bamzi/base.html" %}
+{% load static %}
+{% load jalali_tags %}
+
+{% block title %} حق تقدم‌های کاربران{% endblock %}
+
+{% block header_css %}{% endblock %}
+
+{% block active_menu %}
+<li>
+    <a href="{% url 'admin_user_shares' %}"><i class="fa fa-dashboard"></i> سهام کاربران</a>
+</li>
+<li>
+    <a class="active-menu" href="{% url 'admin_precedence_shares' %}"><i class="fa fa-desktop"></i> حق تقدم‌های من</a>
+</li>
+<li>
+    <a href="{% url 'admin_convention_benefit' %}"><i class="fa fa-table"></i> سود مجامع</a>
+</li>
+{% endblock %}
+
+{% block page_header %}حق تقدم‌های کاربران{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <!-- Advanced Tables -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                    حق تقدم‌های کاربران
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                        <thead>
+                            <tr>
+                                <th>کاربر</th>
+                                <th>حق تقدم</th>
+                                <th>سهم اصلی</th>
+                                <th>تعداد</th>
+                                <th>آخرین قیمت</th>
+                                <th>قیمت سهم اصلی</th>
+                                <th>از تاریخ</th>
+                                <th>تا تاریخ</th>
+                                <th>امور سهام</th>
+                                <th>تبدیل/فروش</th>
+                                <th>اقدام کاربر</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for share in user_precedence_shares %}
+                                <tr class="{% if not share.convert %}danger{% else %}odd gradeA{% endif %}" data-edit-id={{share.id}}>
+                                    <td>{{share.user}}</td>
+                                    <td><i class="fa fa-square text {% if share.is_open %}text-success{% else %}text-danger{% endif %}"></i>
+                                     <span class="symbol_name">{{share.symbol_name}}</span></td>
+                                    <td>{{share.main_share}}</td>
+                                    <td class="text-center count">{{share.count}}</td>
+                                    <td class="text-center">{{share.last_price}}</td>
+                                    <td class="text-center">{{share.main_last_price}}</td>
+                                    <td>{{share.from_date|to_jalali:'%y/%m/%d'}}</td>
+                                    <td>{{share.to_date|to_jalali:'%y/%m/%d'}}</td>
+                                    <td>{% if share.stock_affair %}{{share.stock_affair}}{% endif %}</td>
+                                    <td>{% if share.convert %}تبدیل{% else %}فروش{% endif %}</td>
+                                    <td class="act">{{share.act}}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--End Advanced Tables -->
+    </div>
+</div>
+{% endblock %}
+
+{% block footer_js %}
+    <!-- Custom Js -->
+
+    <script src="{% static 'bamzi/js/dataTables/jquery.dataTables.js' %}" ></script>
+    <script src="{% static 'bamzi/js/dataTables/dataTables.bootstrap.js' %}" ></script>
+    <script>
+        $(document).ready(function () {
+            $('#dataTables-example').dataTable();
+        });
+    </script>
+{% endblock %}

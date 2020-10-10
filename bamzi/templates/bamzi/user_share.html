@@ -112,7 +112,7 @@
                                     <td class="text-center">{{share.last_price}}</td>
                                     <td class="text-center">{{share.final_price}}</td>
                                     <td class="text-center count">{{share.count}}</td>
-                                    <td class="text-center">{{share.profit_loss}}</td>
+                                    <td class="text-center {% if share.profit_loss >= 0 %}text-success{% else %}text-danger{% endif %}">{{share.profit_loss}}</td>
                                     <td class="text-center">{{share.target}}</td>
                                     <td class="text-center got_averaged">{% if share.got_averaged %}<i class="fa fa-check-square text-success"></i>{% endif %}</td>
                                     <td class="text-center">
