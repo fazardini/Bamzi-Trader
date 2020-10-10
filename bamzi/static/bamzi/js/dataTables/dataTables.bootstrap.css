@@ -54,16 +54,16 @@ table.dataTable thead .sorting_desc_disabled {
     cursor: pointer;
 }
 
-table.dataTable thead .sorting {
-    background: url('../images/sort_both.png') no-repeat center right;
-}
+/* table.dataTable thead .sorting {
+    background: url('sort_neutral.png') no-repeat center left;
+} */
 
 table.dataTable thead .sorting_asc {
-    background: url('../images/sort_asc.png') no-repeat center right;
+    background: url('sort_up.png') no-repeat center left;
 }
 
 table.dataTable thead .sorting_desc {
-    background: url('../images/sort_desc.png') no-repeat center right;
+    background: url('sort_down.png') no-repeat center left;
 }
 
 table.dataTable thead .sorting_asc_disabled {

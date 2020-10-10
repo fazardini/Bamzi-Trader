@@ -128,6 +128,18 @@ def my_shares(request, username):
     return render(request, 'bamzi/user_share.html', {'user_shares':user_shares_result})
 
 
+def edit_user_share(request, share_id):
+    if request.method == 'POST':
+        user_share = UserShare.objects.filter(pk=share_id, user=request.user).first()
+        if user_share:
+            count = request.POST.get('count', 0)
+            basic_price = request.POST.get('basic_price', 0)
+            user_share.count = count
+            user_share.basic_price = basic_price
+            user_share.save()
+    return HttpResponseRedirect(reverse('my_shares', kwargs={'username': request.user.username}))
+
+
 def my_precedence_shares(request, username):
     user = request.user
     access = (user.username == username)

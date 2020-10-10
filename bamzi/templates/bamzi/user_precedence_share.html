@@ -22,15 +22,9 @@
 <li>
     <a href="{% url 'my_industry' username=request.user.username %}"><i class="fa fa-sitemap"></i> صنایع من</a>
 </li>
-<li>
+{% comment %} <li>
     <a href="tab-panel.html"><i class="fa fa-qrcode"></i> سهام مناسب خرید</a>
-</li>
-<li>
-    <a href="#"><i class="fa fa-sitemap"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
-</li>
-<li>
-    <a href="empty.html"><i class="fa fa-fw fa-file"></i> Empty Page</a>
-</li>
+</li> {% endcomment %}
 {% endblock %}
 
 {% block page_header %}حق تقدم‌های من{% endblock %}

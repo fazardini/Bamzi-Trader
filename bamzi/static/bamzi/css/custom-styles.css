@@ -33,9 +33,9 @@ http://creativecommons.org/licenses/by/3.0/
 }
 body {
   font-family: 'yekanNumbers', 'Samim';
+  font-size: 12px;
   background: #32C2CD url(../img/bg-img.jpg) !important;
   direction: rtl !important;
-  
 }
 
 #wrapper {
@@ -64,6 +64,12 @@ body {
 
 .text-center {
     text-align:center;
+}
+.fa.fa-square.text.text-success{
+  font-size: 10px;
+}
+.min-width-50{
+  min-width: 50px;
 }
 .no-boder {
     border:1px solid #f3f3f3;
