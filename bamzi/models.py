@@ -127,7 +127,7 @@ class UserConventionBenefit(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT, related_name="user_benefits")
     convention_benefit = models.ForeignKey(ConventionBenefit, on_delete=models.CASCADE, related_name="user")
     benefit_price = models.BigIntegerField(verbose_name="مبلغ سود")
-    got_it = models.BooleanField(verbose_name="تحویل گرفتم")
+    got_it = models.BooleanField(verbose_name="دریافت شد")
         
     def __str__(self):
         return "%(user)s - %(convention_benefit)s" % {'user': self.user, 'convention_benefit': self.convention_benefit}

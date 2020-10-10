@@ -12,6 +12,7 @@ urlpatterns = [
     path('industry-chart/<username>/', my_industry, name='my_industry'),
     path('user-shares/<share_id>/', edit_user_share, name='edit_user_shares'),
     path('user-precedence-shares/<share_id>/', edit_user_precedence_shares, name='edit_user_precedence_shares'),
+    path('user-convention-benefit/<share_id>/', edit_user_convention_benefit, name='edit_user_convention_benefit'),
 
     path('shares-name/', shares_name, name='shares_name'),
     path('precedence-shares-name/', precedence_shares_name, name='precedence_shares_name'),

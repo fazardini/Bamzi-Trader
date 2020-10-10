@@ -28,9 +28,6 @@
 {% endblock %}
 
 {% block page_header %}سود مجامع من{% endblock %}
-
-{% comment %} {% block page_header_small %}سهام من{% endblock %} {% endcomment %}
-
 {% block content %}
 <div class="row">
     <div class="col-lg-12">
@@ -79,17 +76,28 @@
                                 <th>از تاریخ</th>
                                 <th>تا تاریخ</th>
                                 <th>بانک</th>
+                                <th>دریافت شد</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for share in user_convention_benefits %}
-                                <tr class="odd gradeA">
+                                <tr class="odd gradeA" data-edit-id={{share.id}}>
                                     <td><i class="fa fa-square text {% if share.is_open %}text-success{% else %}text-danger{% endif %}"></i>
-                                     {{share.symbol_name}}</td>
-                                    <td>{{share.benefit_price}}</td>
+                                     <span class="symbol_name">{{share.symbol_name}}</span></td>
+                                    <td class="text-center benefit_price">{{share.benefit_price}}</td>
                                     <td>{{share.from_date|to_jalali:'%y/%m/%d'}}</td>
                                     <td>{{share.to_date|to_jalali:'%y/%m/%d'}}</td>
                                     <td>{{share.bank}}</td>
+                                    <td class="got">{% if share.got_it %}<i class="fa fa-check-square text-success"></i>{% endif %}</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm edit-share-btn" data-toggle="modal" data-target="#myModal">
+                                            <i class="fa fa-edit"></i>
+                                        </button>
+                                        {% comment %} <button class="btn btn-danger btn-sm delete-share-btn" href="{% url 'edit_user_shares' share_id=share.id %}" data-method="DELETE" data-confirm="آیا از حذف سهم {{share.symbol_name}} اطمینان دارید؟">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button> {% endcomment %}
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -99,6 +107,43 @@
             </div>
         </div>
         <!--End Advanced Tables -->
+    </div>
+</div>
+
+<div class="panel-body">
+{% comment %} <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+    Click  Launch Demo Modal
+</button> {% endcomment %}
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    {% comment %} <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> {% endcomment %}
+                    <h4 class="modal-title" id="myModalLabel">ویرایش سودمجمع</h4>
+                </div>
+                <form role="form" id="ModalForm" action="" method="POST">
+                    <div class="modal-body col-lg-12">
+                        {% csrf_token %}
+                            <div class="form-group col-lg-6">
+                                <label>مبلغ سود</label>
+                                <input id="benefit_price_edit" class="form-control" placeholder="به ریال" name="benefit_price" required>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label></label>
+                                <div class="checkbox">
+                                    <label>
+                                        <input id="got_it" type="checkbox" name="got_it">دریافت شد
+                                    </label>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">ثبت تغییرات</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">انصراف</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -140,6 +185,19 @@
                 $("#share_name").val('');
                 $("#share_name").attr("data-share", "");
                 $("#remove_share").hide();
+            });
+
+            $(".edit-share-btn").click(function(){
+                var tr = $(this).closest('tr');
+                var symbol_name = tr.find(".symbol_name").html();
+                var share_id = tr.attr("data-edit-id")
+                $('#myModalLabel').html('ویرایش سود سهم '+symbol_name);
+                var benefit_price = tr.find(".benefit_price").html();
+                var got_it = tr.find(".got").html() ? true : false;
+                $('#benefit_price_edit').val(benefit_price);
+                $('#got_it').prop( "checked", got_it );
+                var edit_url = '/bamzi/user-convention-benefit/'+share_id+'/';
+                $("#ModalForm").attr('action', edit_url);
             });
         });
     </script>

@@ -152,6 +152,20 @@ def edit_user_precedence_shares(request, share_id):
     return HttpResponseRedirect(reverse('my_precedence_shares', kwargs={'username': request.user.username}))
 
 
+def edit_user_convention_benefit(request, share_id):
+    if request.method == 'POST':
+        user_convention_benefit = UserConventionBenefit.objects.filter(pk=share_id, user=request.user).first()
+        if user_convention_benefit:
+            benefit_price = request.POST.get('benefit_price', 0)
+            got_it = request.POST.get('got_it', False)
+            got_it = True if got_it else False
+            user_convention_benefit.benefit_price = benefit_price
+            user_convention_benefit.got_it = got_it
+            user_convention_benefit.save()
+    return HttpResponseRedirect(reverse('my_convention_benefit', kwargs={'username': request.user.username}))
+
+
+
 def my_precedence_shares(request, username):
     user = request.user
     access = (user.username == username)
@@ -206,7 +220,8 @@ def my_convention_benefit(request, username):
                                     'from_date': benefit.convention_benefit.from_date,
                                     'to_date': benefit.convention_benefit.to_date,
                                     'bank': benefit.convention_benefit.get_bank_display(),
-                                    'is_open': benefit.convention_benefit.share.is_open})
+                                    'is_open': benefit.convention_benefit.share.is_open,
+                                    'got_it': benefit.got_it})
 
     return render(request, 'bamzi/user_convention_benefit.html', {'user_convention_benefits':result})
 
