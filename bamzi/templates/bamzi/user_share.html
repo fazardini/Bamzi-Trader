@@ -29,6 +29,39 @@
 {% block page_header %}سهام من{% endblock %}
 
 {% block content %}
+{% if not user_shares %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+وارد کردن داده ها از فایل
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                {% if not_exists_shares %}
+                    <div class="alert alert-danger">سهام ناموجود</div>
+                    {% for share in not_exists_shares %}
+                        <div class="col-md-4">{{share}}</div>
+                    {% endfor %}
+                {% else %}
+                    <form role="form" action="{% url 'import_csv_shates' username=request.user.username %}" method="POST"  enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <div class="form-group col-md-6">
+                            <label>فایل csv</label>
+                            <input type="file" accept=".csv" name="file_data">
+                        </div>
+                        <div class="col-md-6">
+                            <button type="submit" class="btn btn-primary col-md-3">ثبت اطلاعات</button>
+                        </div>
+                    </form>
+                {% endif %}
+                </div>
+                <!-- /.row (nested) -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default">

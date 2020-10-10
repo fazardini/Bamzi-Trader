@@ -1,6 +1,8 @@
 from django.shortcuts import render
 import requests
 import json
+import csv
+from io import StringIO
 from BamziTrader.settings import BASE_DIR
 from bamzi.models import *
 from bamzi.helpers.text_helpers import *
@@ -104,7 +106,8 @@ def my_shares(request, username):
             share = Share.objects.filter(pk=share_id).first()
             count = int(count)
             basic_price = int(basic_price)
-            if share:
+            user_share = UserShare.objects.filter(share=share, user=user).exists()
+            if share and not user_share:
                 user_share = UserShare.objects.create(user=user,
                 share=share, count=count, basic_price=basic_price,
                 relative_max_price=basic_price,
@@ -262,3 +265,38 @@ def share_convention(request):
                                     'is_open': share_c.share.is_open,
                                     'industry': share_c.share.industry.name})
     return render(request, 'bamzi/share_convention.html', {'share_conventions':share_convention_result})
+
+
+def import_csv_shates(request, username):
+    user = request.user
+    access = (user.username == username)
+    file = request.FILES['file_data'].read().decode('utf-8')
+    if not access or not file:
+        return HttpResponseRedirect(reverse('login'))
+    firstline = True
+    user_share_list = []
+    tn = TextNormalizer(TextNormalizerConfig.NORMAL_NAME_CONFIG)
+    csv_data = csv.reader(StringIO(file), delimiter=',')
+    csv_data_list = []
+    for row in csv_data:
+        if firstline:
+            firstline = False
+            continue
+        user_share_list.append(tn.normalize_text(row[0]))
+        csv_data_list.append(row)
+    all_share_list = Share.objects.all().values_list('symbol_name', flat=True)
+    not_exists_shares = list(set(user_share_list) - set(all_share_list))
+    if not_exists_shares:
+        return render(request, 'bamzi/user_share.html', {'not_exists_shares':not_exists_shares})
+
+    for row in csv_data_list:
+        if firstline:
+            firstline = False
+            continue
+        share = Share.objects.filter(symbol_name=tn.normalize_text(row[0])).first()
+        UserShare.objects.create(user=user,
+                share=share, count=int(row[1]), basic_price=int(row[2]),
+                relative_max_price=int(row[2]),
+                relative_min_price=int(row[2]))
+
+    return HttpResponseRedirect(reverse('my_shares', kwargs={'username': user.username}))

@@ -17,4 +17,6 @@ urlpatterns = [
     path('precedence-shares-name/', precedence_shares_name, name='precedence_shares_name'),
     path('convention-benefit-name/', convention_benefit_name, name='convention_benefit_name'),
     path('shares-convention/', share_convention, name='share_convention'),
+
+    path('import-csv-shares/<username>/', import_csv_shates, name='import_csv_shates'),
 ]
