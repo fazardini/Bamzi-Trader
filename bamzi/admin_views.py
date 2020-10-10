@@ -5,10 +5,8 @@ from BamziTrader.settings import BASE_DIR
 from bamzi.models import *
 from bamzi.helpers.text_helpers import *
 from django.contrib.auth.models import User
-from django.contrib.auth import login, logout, authenticate
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.urls import reverse
-from django.db.models import Sum, F, Count
 
 
 def admin_user_shares(request):
@@ -36,7 +34,7 @@ def admin_user_shares(request):
     return render(request, 'bamzi/user_shares_admin.html', {'user_shares':user_shares_result})
 
 
-def admin_user_precedence_shares(request):
+def admin_precedence_shares(request):
     user = request.user
     if not user.is_superuser:
         return HttpResponseRedirect(reverse('login'))
@@ -62,7 +60,7 @@ def admin_user_precedence_shares(request):
 
 
 
-def admin_user_convention_benefit(request):
+def admin_convention_benefit(request):
     user = request.user
     if not user.is_superuser:
         return HttpResponseRedirect(reverse('login'))
@@ -81,3 +79,44 @@ def admin_user_convention_benefit(request):
                                     'user': benefit.user.username})
 
     return render(request, 'bamzi/convention_benefit_admin.html', {'user_convention_benefits':result})
+
+
+def update_share_data(request):
+    user = request.user
+    if not user.is_superuser or request.method != 'POST':
+        return HttpResponseRedirect(reverse('login'))
+    
+    share_data = {}
+    tn = TextNormalizer(TextNormalizerConfig.NORMAL_NAME_CONFIG)
+    tse_response = requests.get('http://www.tsetmc.com/tsev2/data/MarketWatchInit.aspx?h=0&r=0')
+    if tse_response.status_code == 200:
+        tse_data = tse_response.text.split(';')
+        tse_data = list(map(lambda x: x.split(','), tse_data))
+        tse_data = list(filter(lambda x: not hasNumbers(x[2]) and len(x)==23, tse_data))
+        Share.objects.all().update(is_open=False)
+        for share_data in tse_data:
+            share = Share.objects.filter(tse_id=share_data[0]).first()
+            if not share:
+                share = Share.objects.create(tse_id=share_data[0])
+                share.symbol_name = tn.normalize_text(share_data[2])
+                share.company_name = tn.normalize_text(share_data[3])
+                industry = Industry.objects.filter(code=int(share_data[18])).first()
+                share.industry = industry
+            
+            share.last_price = int(share_data[7])
+            share.final_price = int(share_data[6])
+            share.eps = 0 if not share_data[14] else int(share_data[14])
+            # if share.absolute_max_price:
+            #     share.absolute_max_price = max(share.absolute_max_price, share.final_price)
+            # if share.absolute_min_price:
+            #     share.absolute_min_price = min(share.absolute_min_price, share.final_price)
+            share.is_open = True
+            share.save()
+            user_shares = UserShare.objects.filter(share=share)
+            
+            for user_share in user_shares:
+                user_share.relative_max_price = max(share.final_price, user_share.relative_max_price)
+                user_share.relative_min_price = min(share.final_price, user_share.relative_min_price)
+                user_share.save()
+
+    return HttpResponseRedirect(reverse('admin_user_shares'))
