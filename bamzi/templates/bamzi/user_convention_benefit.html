@@ -89,8 +89,8 @@
                                     <td>{{share.from_date|to_jalali:'%y/%m/%d'}}</td>
                                     <td>{{share.to_date|to_jalali:'%y/%m/%d'}}</td>
                                     <td>{{share.bank}}</td>
-                                    <td class="got">{% if share.got_it %}<i class="fa fa-check-square text-success"></i>{% endif %}</td>
-                                    <td>
+                                    <td class="text-center got">{% if share.got_it %}<i class="fa fa-check-square text-success"></i>{% endif %}</td>
+                                    <td class="text-center" >
                                         <button class="btn btn-primary btn-sm edit-share-btn" data-toggle="modal" data-target="#myModal">
                                             <i class="fa fa-edit"></i>
                                         </button>

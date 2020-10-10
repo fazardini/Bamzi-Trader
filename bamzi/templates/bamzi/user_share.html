@@ -76,7 +76,7 @@
             </div>
             <div class="panel-body">
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                    <table class="table table-bordered table-hover" id="dataTables-example">
                         <thead>
                             <tr>
                                 <th class="min-width-50">سهم</th>
@@ -89,12 +89,20 @@
                                 <th>تعداد</th>
                                 <th>درصد سود/ضرر</th>
                                 <th>درصد هدف</th>
+                                <th>میانگین</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for share in user_shares %}
-                                <tr class="{% if share.target >= 100 %}success{% else %}odd gradeA{% endif %}" data-edit-id={{share.id}}>
+                                <tr class="
+                                {% if share.target >= 100 %}
+                                    danger
+                                {% elif share.got_averaged and share.profit_loss > 0 %}
+                                    info
+                                {% elif share.profit_loss < -20 %}
+                                    warning
+                                {% endif %}" data-edit-id={{share.id}}>
                                     <td><i class="fa fa-square text {% if share.is_open %}text-success{% else %}text-danger{% endif %}"></i>
                                      <span class="symbol_name">{{share.symbol_name}}</span></td>
                                     <td>{{share.company_name}}</td>
@@ -106,7 +114,8 @@
                                     <td class="text-center count">{{share.count}}</td>
                                     <td class="text-center">{{share.profit_loss}}</td>
                                     <td class="text-center">{{share.target}}</td>
-                                    <td>
+                                    <td class="text-center got_averaged">{% if share.got_averaged %}<i class="fa fa-check-square text-success"></i>{% endif %}</td>
+                                    <td class="text-center">
                                         <button class="btn btn-primary btn-sm edit-share-btn" data-toggle="modal" data-target="#myModal">
                                             <i class="fa fa-edit"></i>
                                         </button>
@@ -146,6 +155,12 @@
                             <div class="form-group col-lg-6">
                                 <label>تعداد</label>
                                 <input id="count_edit" class="form-control" type="number" name="count" required>
+                            </div>
+                            <div class="checkbox col-lg-6">
+                                <label></label>
+                                <label>
+                                    <input id="got_averaged" type="checkbox" name="got_averaged">میانگین گرفتم
+                                </label>
                             </div>
                     </div>
                     <div class="modal-footer">
@@ -207,6 +222,8 @@
                 var count = tr.find(".count").html();
                 $('#basic_price_edit').val(basic_price);
                 $('#count_edit').val(count);
+                var got_averaged = tr.find(".got_averaged").html() ? true : false;
+                $('#got_averaged').prop( "checked", got_averaged );
                 var edit_url = '/bamzi/user-shares/'+share_id+'/';
                 $("#ModalForm").attr('action', edit_url);
             });

@@ -124,7 +124,8 @@ def my_shares(request, username):
                                     'target': u_share.target,
                                     'is_open': u_share.share.is_open,
                                     'market_type': u_share.share.get_market_type_display(),
-                                    'industry': u_share.share.industry.name})
+                                    'industry': u_share.share.industry.name,
+                                    'got_averaged': u_share.got_averaged})
     return render(request, 'bamzi/user_share.html', {'user_shares':user_shares_result})
 
 
@@ -134,8 +135,11 @@ def edit_user_share(request, share_id):
         if user_share:
             count = request.POST.get('count', 0)
             basic_price = request.POST.get('basic_price', 0)
+            got_averaged = request.POST.get('got_averaged', False)
+            got_averaged = bool(got_averaged)
             user_share.count = count
             user_share.basic_price = basic_price
+            user_share.got_averaged = got_averaged
             user_share.save()
     return HttpResponseRedirect(reverse('my_shares', kwargs={'username': request.user.username}))
 
@@ -158,7 +162,7 @@ def edit_user_convention_benefit(request, share_id):
         if user_convention_benefit:
             benefit_price = request.POST.get('benefit_price', 0)
             got_it = request.POST.get('got_it', False)
-            got_it = True if got_it else False
+            got_it = bool(got_it)
             user_convention_benefit.benefit_price = benefit_price
             user_convention_benefit.got_it = got_it
             user_convention_benefit.save()
