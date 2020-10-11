@@ -21,6 +21,7 @@ class Share(models.Model):
     tp1 = models.IntegerField(verbose_name="اولین هدف صعود", null=True, blank=True)
     sl1 = models.IntegerField(verbose_name="اولین هدف نزول", null=True, blank=True)
     is_open = models.BooleanField(verbose_name="وضعیت سهم", default=False)
+    yesterday_price = models.IntegerField(verbose_name="قیمت دیروز", null=True, blank=True)
 
     MARKET_TYPES = (
         ('B1', 'بورس (اول)'),

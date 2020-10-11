@@ -105,6 +105,7 @@ def update_share_data(request):
             
             share.last_price = int(share_data[7])
             share.final_price = int(share_data[6])
+            share.yesterday_price = int(share_data[13])
             share.eps = 0 if not share_data[14] else int(share_data[14])
             # if share.absolute_max_price:
             #     share.absolute_max_price = max(share.absolute_max_price, share.final_price)

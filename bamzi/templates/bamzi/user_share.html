@@ -142,8 +142,8 @@
                                     <td>{{share.industry}}</td>
                                     <td>{{share.market_type}}</td>
                                     <td class="text-center basic_price">{{share.basic_price}}</td>
-                                    <td class="text-center">{{share.last_price}}</td>
-                                    <td class="text-center">{{share.final_price}}</td>
+                                    <td class="text-center {% if share.last_price_percent >= 0 %}text-success{% else %}text-danger{% endif %}">{{share.last_price}} ({{share.last_price_percent}})</td>
+                                    <td class="text-center {% if share.final_price_percent >= 0 %}text-success{% else %}text-danger{% endif %}">{{share.final_price}} ({{share.final_price_percent}})</td>
                                     <td class="text-center count">{{share.count}}</td>
                                     <td class="text-center {% if share.profit_loss >= 0 %}text-success{% else %}text-danger{% endif %}">{{share.profit_loss}}</td>
                                     <td class="text-center">{{share.target}}</td>
