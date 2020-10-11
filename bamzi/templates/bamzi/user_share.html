@@ -145,8 +145,8 @@
                                     <td class="text-center {% if share.last_price_percent >= 0 %}text-success{% else %}text-danger{% endif %}">{{share.last_price}} (<span class="bidi">{{share.last_price_percent}}</span>)</td>
                                     <td class="text-center {% if share.final_price_percent >= 0 %}text-success{% else %}text-danger{% endif %}">{{share.final_price}} (<span class="bidi">{{share.final_price_percent}}</span>)</td>
                                     <td class="text-center count">{{share.count}}</td>
-                                    <td class="text-center bidi{% if share.profit_loss >= 0 %}text-success{% else %}text-danger{% endif %}">{{share.profit_loss}}</td>
-                                    <td class="text-center">{{share.target}}</td>
+                                    <td class="text-center bidi {% if share.profit_loss >= 0 %}text-success{% else %}text-danger{% endif %}">{{share.profit_loss}}</td>
+                                    <td class="text-center bidi">{{share.target}}</td>
                                     <td class="text-center got_averaged">{% if share.got_averaged %}<i class="fa fa-check-square text-success"></i>{% endif %}</td>
                                     <td class="text-center">
                                         <button class="btn btn-primary btn-sm edit-share-btn" data-toggle="modal" data-target="#myModal">

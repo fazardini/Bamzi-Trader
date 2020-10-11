@@ -103,6 +103,9 @@ def update_share_data(request):
                 industry = Industry.objects.filter(code=int(share_data[18])).first()
                 share.industry = industry
             
+            if not share.industry:
+                industry = Industry.objects.filter(code=int(share_data[18])).first()
+                share.industry = industry
             share.last_price = int(share_data[7])
             share.final_price = int(share_data[6])
             share.yesterday_price = int(share_data[13])

@@ -8,6 +8,9 @@ class Industry(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ['name']
+
 
 class Share(models.Model):
     symbol_name = models.CharField(verbose_name="نام سهم", max_length=32)
@@ -63,7 +66,10 @@ class UserShare(models.Model):
         """
             درصد سود یا زیان سربه‌سر نسبت به آخرین قیمت را محاسبه میکند.
         """
-        profit_loss = ((self.share.last_price/self.basic_price)-1)*100
+        if self.basic_price:
+            profit_loss = ((self.share.last_price/self.basic_price)-1)*100
+        else:
+            profit_loss = 0
         return int(round(profit_loss))
     
 

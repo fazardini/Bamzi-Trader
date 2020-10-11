@@ -116,8 +116,14 @@ def my_shares(request, username):
     user_shares = UserShare.objects.filter(user=user)
     user_shares_result = []
     for u_share in user_shares:
-        last_price_percent = round((u_share.share.last_price - u_share.share.yesterday_price)/u_share.share.yesterday_price * 100, 2)
-        final_price_percent = round((u_share.share.final_price - u_share.share.yesterday_price)/u_share.share.yesterday_price * 100, 2)
+        if u_share.share.yesterday_price:
+            last_price_percent = round((u_share.share.last_price - u_share.share.yesterday_price)/u_share.share.yesterday_price * 100, 2)
+            final_price_percent = round((u_share.share.final_price - u_share.share.yesterday_price)/u_share.share.yesterday_price * 100, 2)
+        else:
+            last_price_percent = 0
+            final_price_percent = 0
+        if not u_share.share.industry:
+            error = 0
         user_shares_result.append({ 'id': u_share.id, 
                                     'symbol_name': u_share.share.symbol_name,
                                     'company_name': u_share.share.company_name,
