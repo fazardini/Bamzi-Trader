@@ -61,7 +61,10 @@ body {
     padding:10px;
     min-height:600px;
 }
-
+.bidi{
+  direction: ltr;
+  unicode-bidi: bidi-override;
+}
 .text-center {
     text-align:center;
 }
