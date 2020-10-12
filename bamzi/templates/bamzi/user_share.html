@@ -129,7 +129,9 @@
                         <tbody>
                             {% for share in user_shares %}
                                 <tr class="
-                                {% if share.target >= 100 %}
+                                {% if share.basic_price > share.tp1 %}
+                                    success
+                                {% elif share.target >= 100 %}
                                     danger
                                 {% elif share.got_averaged and share.profit_loss > 0 %}
                                     info
@@ -215,8 +217,6 @@
     <script src="{% static 'bamzi/js/dataTables/dataTables.bootstrap.js' %}" ></script>
     <script>
         $(document).ready(function () {
-            $('#dataTables-example').dataTable();
-
             $(function() {
                 $("#share_name").autocomplete({
                     source: '/bamzi/shares-name/',
@@ -260,6 +260,7 @@
                 var edit_url = '/bamzi/user-shares/'+share_id+'/';
                 $("#ModalForm").attr('action', edit_url);
             });
+            $('#dataTables-example').dataTable();
         });
     </script>
 {% endblock %}

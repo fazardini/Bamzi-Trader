@@ -122,8 +122,7 @@ def my_shares(request, username):
         else:
             last_price_percent = 0
             final_price_percent = 0
-        if not u_share.share.industry:
-            error = 0
+
         user_shares_result.append({ 'id': u_share.id, 
                                     'symbol_name': u_share.share.symbol_name,
                                     'company_name': u_share.share.company_name,
@@ -138,7 +137,8 @@ def my_shares(request, username):
                                     'industry': u_share.share.industry.name,
                                     'got_averaged': u_share.got_averaged,
                                     'last_price_percent': last_price_percent,
-                                    'final_price_percent': final_price_percent})
+                                    'final_price_percent': final_price_percent,
+                                    'tp1': u_share.share.tp1})
     return render(request, 'bamzi/user_share.html', {'user_shares':user_shares_result})
 
 
