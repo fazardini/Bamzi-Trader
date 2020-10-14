@@ -17,6 +17,12 @@ def admin_user_shares(request):
     user_shares = UserShare.objects.all()
     user_shares_result = []
     for u_share in user_shares:
+        if u_share.share.yesterday_price:
+            last_price_percent = round((u_share.share.last_price - u_share.share.yesterday_price)/u_share.share.yesterday_price * 100, 2)
+            final_price_percent = round((u_share.share.final_price - u_share.share.yesterday_price)/u_share.share.yesterday_price * 100, 2)
+        else:
+            last_price_percent = 0
+            final_price_percent = 0
         user_shares_result.append({ 'id': u_share.id, 
                                     'symbol_name': u_share.share.symbol_name,
                                     'company_name': u_share.share.company_name,
@@ -30,7 +36,10 @@ def admin_user_shares(request):
                                     'market_type': u_share.share.get_market_type_display(),
                                     'industry': u_share.share.industry.name,
                                     'got_averaged': u_share.got_averaged,
-                                    'user': u_share.user.username})
+                                    'user': u_share.user.username,
+                                    'last_price_percent': last_price_percent,
+                                    'final_price_percent': final_price_percent,
+                                    'tp1': u_share.share.tp1})
     return render(request, 'bamzi/user_shares_admin.html', {'user_shares':user_shares_result})
 
 

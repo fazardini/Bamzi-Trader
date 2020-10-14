@@ -191,12 +191,11 @@
                 $('#myModalLabel').html('ویرایش حق‌تقدم '+symbol_name);
                 var count = tr.find(".count").html();
                 $('#count_edit').val(count);
-                var act = tr.find(".act").html();
-                var $dd = $('#act');
-                var $options = $('option', $dd);
-                $options.each(function() {
-                if ($(this).text() == act)
-                    $(this).select(); // This is where my problem is
+                var act = tr.find(".act").text();
+                $("#act_select option").each(function() {
+                    if($(this).text() == act) {
+                        $(this).attr('selected', 'selected');            
+                    }                        
                 });
                 var edit_url = '/bamzi/user-precedence-shares/'+share_id+'/';
                 $("#ModalForm").attr('action', edit_url);
