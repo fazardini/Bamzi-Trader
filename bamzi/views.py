@@ -6,6 +6,7 @@ from io import StringIO
 from BamziTrader.settings import BASE_DIR
 from bamzi.models import *
 from bamzi.helpers.text_helpers import *
+from bamzi.helpers.helpers import get_user_alert
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
@@ -139,7 +140,8 @@ def my_shares(request, username):
                                     'last_price_percent': last_price_percent,
                                     'final_price_percent': final_price_percent,
                                     'tp1': u_share.share.tp1})
-    return render(request, 'bamzi/user_share.html', {'user_shares':user_shares_result})
+    alerts = get_user_alert(user)
+    return render(request, 'bamzi/user_share.html', {'user_shares':user_shares_result, 'alerts': alerts})
 
 
 def edit_user_share(request, share_id):
@@ -210,8 +212,8 @@ def my_precedence_shares(request, username):
                                     'stock_affair': up_share.precedence_share.main_share.stock_affair,
                                     'is_open': up_share.precedence_share.share.is_open,
                                     'act': up_share.get_act_display()})
-
-    return render(request, 'bamzi/user_precedence_share.html', {'user_precedence_shares':result})
+    alerts = get_user_alert(user)
+    return render(request, 'bamzi/user_precedence_share.html', {'user_precedence_shares':result, 'alerts': alerts})
 
 
 def my_convention_benefit(request, username):
@@ -238,8 +240,8 @@ def my_convention_benefit(request, username):
                                     'bank': benefit.convention_benefit.get_bank_display(),
                                     'is_open': benefit.convention_benefit.share.is_open,
                                     'got_it': benefit.got_it})
-
-    return render(request, 'bamzi/user_convention_benefit.html', {'user_convention_benefits':result})
+    alerts = get_user_alert(user)
+    return render(request, 'bamzi/user_convention_benefit.html', {'user_convention_benefits':result, 'alerts': alerts})
 
 
 def my_industry(request, username):
@@ -256,13 +258,15 @@ def my_industry(request, username):
     for item in result:
         industry_percent[item['share__industry__name']] = round(item['total_price'] / total_share_price * 100, 2)
     empty_industry = Industry.objects.exclude(name__in=industry_percent).annotate(num_shares=Count('shares')).order_by('-num_shares').values('name', 'num_shares')
-    return render(request, 'bamzi/user_industry_chart.html', {'empty_industry': empty_industry, 'industry_percent': industry_percent})
+    alerts = get_user_alert(user)
+    return render(request, 'bamzi/user_industry_chart.html', {'empty_industry': empty_industry, 'industry_percent': industry_percent, 'alerts': alerts})
 
 
 def share_convention(request):
     share_conventions = ShareConvention.objects.all()
     share_convention_result = []
     for share_c in share_conventions:
+        user_share_exists = UserShare.objects.filter(user=request.user, count__gt=0, share=share_c.share).exists()
         share_convention_result.append({ 'id': share_c.id, 
                                     'symbol_name': share_c.share.symbol_name,
                                     'company_name': share_c.share.company_name,
@@ -273,11 +277,13 @@ def share_convention(request):
                                     'level': share_c.level,
                                     'level_str': share_c.get_level_display(),
                                     'is_open': share_c.share.is_open,
-                                    'industry': share_c.share.industry.name})
-    return render(request, 'bamzi/share_convention.html', {'share_conventions':share_convention_result})
+                                    'industry': share_c.share.industry.name,
+                                    'user_has': user_share_exists})
+    alerts = get_user_alert(request.user)
+    return render(request, 'bamzi/share_convention.html', {'share_conventions':share_convention_result, 'alerts': alerts})
 
 
-def import_csv_shates(request, username):
+def import_csv_shares(request, username):
     user = request.user
     access = (user.username == username)
     file = request.FILES['file_data'].read().decode('utf-8')

@@ -123,6 +123,10 @@ class ConventionBenefit(models.Model):
         (4, 'صادرات'),
         (5, 'ملی'),
         (6, 'پارسیان'),
+        (7, 'ایران زمین'),
+        (8, 'سینا'),
+        (9, 'اقتصاد نوین'),
+        (10, 'سپه'),
     )
     bank = models.SmallIntegerField(verbose_name="بانک", choices=BANKS)
         

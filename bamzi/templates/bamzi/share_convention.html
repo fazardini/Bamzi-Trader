@@ -44,10 +44,10 @@
                     <table class="table table-striped table-bordered table-hover" id="dataTables-example">
                         <thead>
                             <tr>
+                                <th>تاریخ مجمع</th>
                                 <th>سهم</th>
                                 <th>شرکت</th>
                                 <th>صنعت</th>
-                                <th>تاریخ مجمع</th>
                                 <th>تجدید ارزیابی</th>
                                 <th>سود انباشته</th>
                                 <th>آورده نقدی</th>
@@ -56,12 +56,12 @@
                         </thead>
                         <tbody>
                             {% for share in share_conventions %}
-                                <tr class="odd gradeA">
+                                <tr class="{% if share.user_has %} success {% else %} odd gradeA{% endif %}">
+                                    <td>{{share.convention_date|to_jalali:'%y/%m/%d' }}</td>
                                     <td><i class="fa fa-square text {% if share.is_open %}text-success{% else %}text-danger{% endif %}"></i>
                                      {{share.symbol_name}}</td>
                                     <td>{{share.company_name}}</td>
                                     <td>{{share.industry}}</td>
-                                    <td>{{share.convention_date|to_jalali:'%y/%m/%d' }}</td>
                                     <td>{{share.revaluation}}</td>
                                     <td>{{share.accumulated_profit}}</td>
                                     <td>{{share.cash_priority}}</td>
