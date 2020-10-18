@@ -33,6 +33,7 @@
                     <table class="table table-striped table-bordered table-hover" id="dataTables-example">
                         <thead>
                             <tr>
+                                <th>مانده</th>
                                 <th>کاربر</th>
                                 <th>حق تقدم</th>
                                 <th>سهم اصلی</th>
@@ -48,7 +49,16 @@
                         </thead>
                         <tbody>
                             {% for share in user_precedence_shares %}
-                                <tr class="{% if not share.convert %}danger{% else %}odd gradeA{% endif %}" data-edit-id={{share.id}}>
+                                <tr class="{% if share.act == 'هیچی' %}danger{% else %}odd gradeA{% endif %}" data-edit-id={{share.id}}>
+                                    {% if share.remaining_up > 0 %}
+                                        <td class="text-success bidi">{{share.remaining_up}}</td>
+                                    {% elif share.remaining_up == 0%}
+                                        <td class="text-warning bidi">0</td>
+                                    {% elif share.remaining_up < 0%}
+                                        <td class="text-danger bidi">{{share.remaining_up}}</td>
+                                    {% else %}
+                                        <td></td>
+                                    {% endif %}
                                     <td>{{share.user}}</td>
                                     <td><i class="fa fa-square text {% if share.is_open %}text-success{% else %}text-danger{% endif %}"></i>
                                      <span class="symbol_name">{{share.symbol_name}}</span></td>
@@ -58,7 +68,7 @@
                                     <td class="text-center">{{share.main_last_price}}</td>
                                     <td>{{share.from_date|to_jalali:'%y/%m/%d'}}</td>
                                     <td>{{share.to_date|to_jalali:'%y/%m/%d'}}</td>
-                                    <td>{% if share.stock_affair %}{{share.stock_affair}}{% endif %}</td>
+                                    <td class="text-center">{% if share.stock_affair %}<a href="{{share.stock_affair}}" target="_blank"><i class="fa fa-users" aria-hidden="true"></i></a>{% endif %}</td>
                                     <td>{% if share.convert %}تبدیل{% else %}فروش{% endif %}</td>
                                     <td class="act">{{share.act}}</td>
                                 </tr>

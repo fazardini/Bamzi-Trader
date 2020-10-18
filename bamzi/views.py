@@ -6,7 +6,7 @@ from io import StringIO
 from BamziTrader.settings import BASE_DIR
 from bamzi.models import *
 from bamzi.helpers.text_helpers import *
-from bamzi.helpers.helpers import get_user_alert
+from bamzi.helpers.helpers import get_user_alert, cal_remaining_up
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
@@ -200,6 +200,9 @@ def my_precedence_shares(request, username):
     user_precedence_shares = UserPrecedenceShare.objects.filter(user=user)
     result = []
     for up_share in user_precedence_shares:
+        remaining_up = None
+        if up_share.precedence_share.to_date:
+            remaining_up = cal_remaining_up(up_share.precedence_share.to_date)
         result.append({ 'id': up_share.id, 
                                     'symbol_name': up_share.precedence_share.share.symbol_name,
                                     'main_share': up_share.precedence_share.main_share.symbol_name,
@@ -211,7 +214,8 @@ def my_precedence_shares(request, username):
                                     'convert': up_share.precedence_share.convert,
                                     'stock_affair': up_share.precedence_share.main_share.stock_affair,
                                     'is_open': up_share.precedence_share.share.is_open,
-                                    'act': up_share.get_act_display()})
+                                    'act': up_share.get_act_display(),
+                                    'remaining_up': remaining_up})
     alerts = get_user_alert(user)
     return render(request, 'bamzi/user_precedence_share.html', {'user_precedence_shares':result, 'alerts': alerts})
 
@@ -267,6 +271,9 @@ def share_convention(request):
     share_convention_result = []
     for share_c in share_conventions:
         user_share_exists = UserShare.objects.filter(user=request.user, count__gt=0, share=share_c.share).exists()
+        remaining_up = None
+        if share_c.convention_date:
+            remaining_up = cal_remaining_up(share_c.convention_date)
         share_convention_result.append({ 'id': share_c.id, 
                                     'symbol_name': share_c.share.symbol_name,
                                     'company_name': share_c.share.company_name,
@@ -278,7 +285,8 @@ def share_convention(request):
                                     'level_str': share_c.get_level_display(),
                                     'is_open': share_c.share.is_open,
                                     'industry': share_c.share.industry.name,
-                                    'user_has': user_share_exists})
+                                    'user_has': user_share_exists,
+                                    'remaining_up': remaining_up})
     alerts = get_user_alert(request.user)
     return render(request, 'bamzi/share_convention.html', {'share_conventions':share_convention_result, 'alerts': alerts})
 

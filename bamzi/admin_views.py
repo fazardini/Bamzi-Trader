@@ -3,6 +3,7 @@ import requests
 import json
 from BamziTrader.settings import BASE_DIR
 from bamzi.models import *
+from bamzi.helpers.helpers import cal_remaining_up
 from bamzi.helpers.text_helpers import *
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
@@ -51,6 +52,9 @@ def admin_precedence_shares(request):
     user_precedence_shares = UserPrecedenceShare.objects.all()
     result = []
     for up_share in user_precedence_shares:
+        remaining_up = None
+        if up_share.precedence_share.to_date:
+            remaining_up = cal_remaining_up(up_share.precedence_share.to_date)
         result.append({ 'id': up_share.id, 
                                     'symbol_name': up_share.precedence_share.share.symbol_name,
                                     'main_share': up_share.precedence_share.main_share.symbol_name,
@@ -63,7 +67,8 @@ def admin_precedence_shares(request):
                                     'stock_affair': up_share.precedence_share.main_share.stock_affair,
                                     'is_open': up_share.precedence_share.share.is_open,
                                     'act': up_share.get_act_display(),
-                                    'user': up_share.user.username})
+                                    'user': up_share.user.username,
+                                    'remaining_up': remaining_up})
 
     return render(request, 'bamzi/precedence_share_admin.html', {'user_precedence_shares':result})
 
