@@ -439,13 +439,13 @@ margin:0px;
 .top-navbar .navbar-brand {
 color: #fff;
 width: 260px;
-text-align: left;
+text-align: right;
 height: 60px;
 font-size: 24px;
 font-weight: 700;
 text-transform: uppercase;
-line-height: 30px;
 background: #24383A;
+padding-right: 30px;
 }
 .navbar-brand b{
 color: #4BD28C;
@@ -568,6 +568,10 @@ margin-right: 2px;
 color: #1CC09F;
 
 background-color: rgb(43, 46, 51);
+}
+.navbar-brand img{
+  width: 60px;
+  display: inline-block;
 }
 .dropdown-user li {
 margin: 8px 0;
