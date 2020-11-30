@@ -96,7 +96,7 @@ def convention_benefit_name(request):
 
 def my_shares(request, username):
     user = request.user
-    access = (user.username == username)
+    access = (user.username == username) or user.is_superuser
     if not access:
         return HttpResponseRedirect(reverse('login'))
     if request.method == 'POST':
@@ -114,7 +114,7 @@ def my_shares(request, username):
                 relative_max_price=basic_price,
                 relative_min_price=basic_price)
     
-    user_shares = UserShare.objects.filter(user=user)
+    user_shares = UserShare.objects.filter(user=user, count__gt=0)
     user_shares_result = []
     for u_share in user_shares:
         if u_share.share.yesterday_price:
@@ -186,7 +186,7 @@ def edit_user_convention_benefit(request, share_id):
 
 def my_precedence_shares(request, username):
     user = request.user
-    access = (user.username == username)
+    access = (user.username == username) or user.is_superuser
     if not access:
         return HttpResponseRedirect(reverse('login'))
     if request.method == 'POST':
@@ -222,7 +222,7 @@ def my_precedence_shares(request, username):
 
 def my_convention_benefit(request, username):
     user = request.user
-    access = (user.username == username)
+    access = (user.username == username) or user.is_superuser
     if not access:
         return HttpResponseRedirect(reverse('login'))
     if request.method == 'POST':
@@ -250,7 +250,7 @@ def my_convention_benefit(request, username):
 
 def my_industry(request, username):
     user = request.user
-    access = (user.username == username)
+    access = (user.username == username) or user.is_superuser
     if not access:
         return HttpResponseRedirect(reverse('login'))
     result = UserShare.objects.filter(user=user).values('share__industry__name').annotate(
@@ -293,7 +293,7 @@ def share_convention(request):
 
 def import_csv_shares(request, username):
     user = request.user
-    access = (user.username == username)
+    access = (user.username == username) or user.is_superuser
     file = request.FILES['file_data'].read().decode('utf-8')
     if not access or not file:
         return HttpResponseRedirect(reverse('login'))

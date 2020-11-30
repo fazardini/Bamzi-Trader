@@ -7,10 +7,10 @@ from datetime import timedelta
 
 def get_user_alert(user):
 
-    user_shares = UserShare.objects.filter(user=user, share__final_price__gte=F('share__tp1')).values_list('share__symbol_name', flat=True)
+    user_shares = UserShare.objects.filter(user=user, share__final_price__gte=F('share__tp1'), count__gt=0).values_list('share__symbol_name', flat=True)
     today = timezone.now().date()
     sell_precedence_share = []
-    user_precedence_shares = UserPrecedenceShare.objects.filter(user=user, act=0,precedence_share__to_date__range=(today, today+timedelta(days=10))).values('precedence_share__share__symbol_name', 'precedence_share__to_date', 'precedence_share__convert')
+    user_precedence_shares = UserPrecedenceShare.objects.filter(user=user, act=0, count__gt=0,precedence_share__to_date__range=(today, today+timedelta(days=10))).values('precedence_share__share__symbol_name', 'precedence_share__to_date', 'precedence_share__convert')
     for precedence_share in user_precedence_shares:
         sell_precedence_share.append({
             'symbol_name': precedence_share['precedence_share__share__symbol_name'],
