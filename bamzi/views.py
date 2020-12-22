@@ -264,11 +264,12 @@ def my_industry(request, username):
     empty_industry = Industry.objects.exclude(name__in=industry_percent).annotate(num_shares=Count('shares')).order_by('-num_shares').values('name', 'num_shares')
     alerts = get_user_alert(user)
     all_share_count = Share.objects.count()
-    all_industry = Industry.objects.all().annotate(num_shares=Count('shares')).values('name', 'num_shares')
+    all_industry = Industry.objects.all().annotate(num_shares=Count('shares')).order_by('-num_shares').values('name', 'num_shares')
     all_industry_percent = []
     for item in all_industry:
         all_industry_percent.append({'name': item['name'],
-                                     'num_shares': round(item['num_shares'] * 100 / all_share_count, 2)})
+                                     'num_shares': item['num_shares'],
+                                     'percent_shares': round(item['num_shares'] * 100 / all_share_count, 2)})
     response = {'empty_industry': empty_industry, 'industry_percent': industry_percent,
                 'alerts': alerts, 'all_industry_percent': all_industry_percent}
     return render(request, 'bamzi/user_industry_chart.html', response)

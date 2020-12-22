@@ -67,7 +67,7 @@
             </div>
             <div class="panel-body">
                 {% for industry in all_industry_percent %}
-                    <div class="alert alert-info">{{industry.name}} با {{industry.num_shares}} درصد</div>
+                    <div class="alert alert-info">{{industry.name}} با {{industry.percent_shares}} درصد و {{industry.num_shares}} سهم</div>
                 {% endfor %}
             </div>
         </div>
