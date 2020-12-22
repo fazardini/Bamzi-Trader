@@ -269,7 +269,8 @@ def my_industry(request, username):
     for item in all_industry:
         all_industry_percent.append({'name': item['name'],
                                      'num_shares': item['num_shares'],
-                                     'percent_shares': round(item['num_shares'] * 100 / all_share_count, 2)})
+                                     'percent_shares': round(item['num_shares'] * 100 / all_share_count, 2),
+                                     'my_percent': industry_percent[item['name']] if item['name'] in industry_percent else 0})
     response = {'empty_industry': empty_industry, 'industry_percent': industry_percent,
                 'alerts': alerts, 'all_industry_percent': all_industry_percent}
     return render(request, 'bamzi/user_industry_chart.html', response)

@@ -35,16 +35,32 @@
             <div class="panel-heading">
                 صنایع من
             </div>
-            <div class="panel-body">                            
+            <div class="panel-body">
 			    <div id="morris-donut-chart"></div>
-                <div>
-                    {% for key,value in industry_percent.items %}
-                        <p>{{key}}: {{value}}</p>
-                    {% endfor %}
-                </div>
+
+<!--                <div>-->
+<!--                    {% for key,value in industry_percent.items %}-->
+<!--                        <p>{{key}}: {{value}}</p>-->
+<!--                    {% endfor %}-->
+<!--                </div>-->
             </div>
-        </div>            
+        </div>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                درصد همه صنایع
+            </div>
+            <div class="panel-body">
+                {% for industry in all_industry_percent %}
+                    <div class="alert {% if industry.percent_shares < industry.my_percent %} alert-danger {%else%} alert-success{%endif%}">
+                        {{industry.name}} با {{industry.percent_shares}} درصد و {{industry.num_shares}} سهم ({{industry.my_percent}})
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
+    </div>
+
     <div class="col-md-6 col-sm-12 col-xs-12">
         <div class="panel panel-danger">
             <div class="panel-heading">
@@ -60,18 +76,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6 col-sm-12 col-xs-12">
-        <div class="panel panel-success">
-            <div class="panel-heading">
-                درصد همه صنایع
-            </div>
-            <div class="panel-body">
-                {% for industry in all_industry_percent %}
-                    <div class="alert alert-info">{{industry.name}} با {{industry.percent_shares}} درصد و {{industry.num_shares}} سهم</div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
+
 </div>
 {% endblock %}
 
